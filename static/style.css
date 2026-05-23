@@ -1,0 +1,104 @@
+/* 
+========================================================================
+   SALES + MARKETING FORECAST - CORE DESIGN SYSTEM & STYLING SKELETON
+========================================================================
+   Aesthetics: Modern Space-Tech / Dark Mode
+   Key Visual Elements: Glassmorphism, Subtle Gradients, Glowing Accents
+========================================================================
+*/
+
+/* 
+   1. DESIGN TOKENS (CSS Variables)
+   Defines the cohesive color scheme, spacing, and transitions.
+*/
+:root {
+    /* Color Palette */
+    --bg-dark-main: #0B0A12;      /* Deep outer-space indigo/black */
+    --bg-dark-panel: #141221;     /* Rich violet-tinted panel background */
+    --border-color: #2D2746;      /* Subtle border color */
+    --accent-glow: #8B5CF6;       /* Electric Violet secondary glow */
+    --accent-cyan: #06B6D4;       /* Neon Cyan primary action */
+    --accent-success: #10B981;    /* Vibrant Emerald for positive indicators */
+    --text-primary: #F3F4F6;      /* Off-white readable text */
+    --text-secondary: #9CA3AF;    /* Cool grey description text */
+    
+    /* Effects & Layout */
+    --glass-blur: blur(12px);
+    --border-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-glow));
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 
+   2. GLOBAL STYLES & RESET
+   Ensures base spacing, default typography, and root alignment.
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark-main);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Background grid/ambient lighting details will be added here */
+}
+
+/* 
+   3. APP CONTAINER & GRID SYSTEM
+   Defines the three-panel layout (Input -> Trends -> Results).
+*/
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.5fr; /* 3-Column layout */
+    gap: 24px;
+    flex-grow: 1;
+}
+
+/* Responsive query for smaller desktop/tablet views */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 
+   4. GLASSMORPHIC PANELS & CARDS
+   Base classes for the glass dashboards and visual blocks.
+*/
+.panel {
+    background: rgba(20, 18, 33, 0.65);
+    border: 1px solid var(--border-color);
+    backdrop-filter: var(--glass-blur);
+    border-radius: 16px;
+    padding: 24px;
+    /* Soft shadow and hover transitions */
+}
+
+/* 
+   5. FORM STYLING
+   Inputs, selects, textareas, checkboxes, and buttons.
+*/
+
+/* 
+   6. CHART & INDICATORS STYLING
+   Grid alignment for metrics numbers and Chart.js container.
+*/
+
+/* 
+   7. LOADER & ANIMATION KEYFRAMES
+   Pulsing effects for the 5-step analysis pipeline.
+*/
+
+/* 
+   8. FORECAST & MARKETING TABS STYLING
+   Content organization for next steps, copywriting guides, and checklists.
+*/
