@@ -65,8 +65,8 @@ function renderForecastResults(data) {
     // Clear skeleton loaders
     // Populate 'Next Steps' panel (each card showing action, expected impact, and difficulty)
     // Populate 'Marketing Ideas' tabs:
-    //   - Tab A: Copywriting & Content hooks (for Instagram, TikTok, etc.)
-    //   - Tab B: Launch & Execution Checklist
-    //   - Tab C: Content Calendar Schedule
+    //   - Tab A: Content ideas
+    //   - Tab B: Advertising strategy
+    //   - Tab C: Messaging guide
     // Attach event listeners to "Copy to Clipboard" buttons
 }
