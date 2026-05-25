@@ -2,10 +2,388 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SALES GROWTH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroStrat | AI Strategist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <h1> Journey to Growth</h1>
-    <p>We will add the text boxes here next.</p>
+<body data-theme="forecast">
+
+    <div id="splash-screen">
+        <div class="scanlines"></div> 
+        
+        <div class="splash-reviews">
+            <div class="flash-review r1">"NeuroStrat redefined how we approach our Q4 launch." - Elena R.</div>
+            <div class="flash-review r2">"Our ad spend efficiency increased by 40% in two weeks." - Sarah J.</div>
+            <div class="flash-review r3">"Like having an elite strategy agency in my browser." - Marcus T.</div>
+            <div class="flash-review r4">"Eliminated 30 hours of manual market research." - David L.</div>
+            <div class="flash-review r5">"The audience psychology data is frighteningly accurate." - Chloe S.</div>
+        </div>
+
+        <h1 class="glitch-intro" id="splash-intro">
+            </h1>
+    </div>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar panel">
+            <div class="brand"><h2>NeuroStrat.</h2></div>
+            <nav class="nav-categories">
+                <a href="#" class="active">Forecast Hub</a>
+                <a href="#">Market Analysis</a>
+                <a href="#">Audience Profiles</a>
+                <a href="#">Settings</a>
+            </nav>
+        </aside>
+
+        <div class="app-container" id="main-scroll">
+            
+            <header class="top-bar">
+                <h1>Strategic Forecast</h1>
+                <p>Calculate your next move using real-time macro-economic data.</p>
+            </header>
+
+            <div class="cipher-overlay" id="cipher-screen">
+                <div class="cipher-text" id="cipher-output">INITIALIZING...</div>
+            </div>
+
+            <main class="dashboard-grid">
+                
+                <div id="tab-forecast" class="tab-content active-tab">
+                    
+                    <div class="grid-layout">
+                        <section class="panel form-panel">
+                            <h3>Strategy Parameters</h3>
+                            <form id="strategy-form" action="/submit" method="POST">
+                                <label>Business Field / Niche</label>
+                                <input type="text" id="business_field" name="business_field" placeholder="e.g., Sustainable Fashion" required>
+
+                                <label>Core Problem to Solve</label>
+                                <textarea id="core_problem" name="core_problem" rows="3" placeholder="Explain your main challenge..." required></textarea>
+                                
+                                <div class="pulse-container">
+                                    <div class="pulse-track"><div class="pulse-line" id="ai-pulse"></div></div>
+                                    <span class="pulse-text" id="pulse-status">Awaiting context</span>
+                                </div>
+
+                                <label>Target Audience</label>
+                                <input type="text" id="target_audience" name="target_audience" placeholder="e.g., Gen Z females" required>
+
+                                <button type="button" class="funky-btn" id="init-btn">Initialize AI Strategy</button>
+                            </form>
+                        </section>
+
+                        <div class="right-column-stack">
+                            <section class="panel trends-panel">
+                                <h3>Live Market Context</h3>
+                                <div class="chart-container" style="position: relative; height:200px; width:100%;">
+                                    <canvas id="marketChart"></canvas>
+                                </div>
+                            </section>
+
+                            <a href="https://www.forbes.com/councils/forbesbusinesscouncil/2024/08/20/the-ai-revolution-opportunities-and-challenges-for-businesses/" target="_blank" class="panel article-card chromatic-wrapper">
+                                <div class="article-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" alt="AI Core" class="chromatic-img">
+                                </div>
+                                <div class="article-content">
+                                    <span class="article-tag">Forbes Insight</span>
+                                    <h4 class="article-title">Why AI in Business Strategy is Crucial</h4>
+                                    <p style="color: var(--text-muted); font-size: 14px;">Why integrating AI into business strategy is the defining move separating market leaders from laggards.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <section class="scroll-section">
+                        <h2 class="section-header color-glitch-text" data-target="The Strategic Advantage.">The Strategic Advantage.</h2>
+                        <div class="strategy-grid">
+                            <a href="#" class="panel hover-card">
+                                <h3>Data-Driven</h3>
+                                <p style="margin-top:12px; color: var(--text-muted);">Eliminate guesswork. We parse thousands of live market data points.</p>
+                            </a>
+                            <a href="#" class="panel hover-card">
+                                <h3>Hyper-Targeted</h3>
+                                <p style="margin-top:12px; color: var(--text-muted);">Psychological profiling ensures your copy hits exact buyer pain points.</p>
+                            </a>
+                            <a href="#" class="panel hover-card">
+                                <h3>Operational Efficiency</h3>
+                                <p style="margin-top:12px; color: var(--text-muted);">Automate redundant analysis, freeing your team for creative execution.</p>
+                            </a>
+                            <a href="#" class="panel hover-card">
+                                <h3>Real-Time Adaptation</h3>
+                                <p style="margin-top:12px; color: var(--text-muted);">The AI pivots your roadmap based on daily macro-economic volatility.</p>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="scroll-section">
+                        <h2 class="section-header color-glitch-text" data-target="Verified Neural Syncs.">Verified Neural Syncs.</h2>
+                        <div class="testimonial-grid">
+                            <div class="panel review-card">
+                                <div>
+                                    <div class="stars">★★★★★</div>
+                                    <p class="review-text" style="margin-top:12px;">"NeuroStrat completely redefined how we approach our Q4 launch. The AI uncovered an audience segment we didn't even know existed."</p>
+                                </div>
+                                <div class="reviewer-info">
+                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" class="avatar" alt="Elena">
+                                    <span class="reviewer">Elena R., E-Com Founder</span>
+                                </div>
+                            </div>
+                            <div class="panel review-card">
+                                <div>
+                                    <div class="stars">★★★★★</div>
+                                    <p class="review-text" style="margin-top:12px;">"It feels like having an elite strategy agency in my browser. The glitch aesthetic is just a bonus to the raw power of the tool."</p>
+                                </div>
+                                <div class="reviewer-info">
+                                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&auto=format&fit=crop" class="avatar" alt="Marcus">
+                                    <span class="reviewer">Marcus T., Growth Lead</span>
+                                </div>
+                            </div>
+                            <div class="panel review-card">
+                                <div>
+                                    <div class="stars">★★★★★</div>
+                                    <p class="review-text" style="margin-top:12px;">"Our ad spend efficiency increased by 40% in two weeks. The strategy output is frighteningly accurate. Highly recommend."</p>
+                                </div>
+                                <div class="reviewer-info">
+                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop" class="avatar" alt="Sarah">
+                                    <span class="reviewer">Sarah J., Marketing Dir.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="scroll-section">
+                        <h2 class="section-header color-glitch-text" data-target="System Queries (FAQ).">System Queries (FAQ).</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <div class="faq-question">How do I start building my AI strategy? <span>+</span></div>
+                                <div class="faq-answer">Simply enter your niche, core problem, and target audience in the Forecast Hub above and click "Initialize AI Strategy". The system will do the rest.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question">What data sources does the AI use? <span>+</span></div>
+                                <div class="faq-answer">We parse real-time search volume, social sentiment nodes, and macro-economic indicators to build your forecast.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question">How long does a complete market analysis take? <span>+</span></div>
+                                <div class="faq-answer">The neural network parses millions of data points and generates your custom, actionable roadmap in seconds.</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="scroll-section">
+                        <div class="cta-banner">
+                            <div class="cta-content">
+                                <h2 class="color-glitch-text" data-target="Ready to scale?">Ready to scale?</h2>
+                                <p>Stop guessing. Start executing with precision data.</p>
+                                <a href="#" class="funky-btn" style="width: fit-content; padding: 18px 40px;">Start Your Project ↗</a>
+                            </div>
+                            <div class="cta-image-wrapper chromatic-wrapper">
+                                <img src="https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=80&w=2000&auto=format&fit=crop" alt="Abstract Tech" class="chromatic-img">
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <div id="tab-market" class="tab-content panel">
+                    <h2>Market Analysis Data</h2>
+                    <p style="margin-top:16px; color: var(--text-muted);">Macro-level competitor intel and trend trajectories.</p>
+                </div>
+                <div id="tab-audience" class="tab-content panel">
+                    <h2>Audience Profiles</h2>
+                    <p style="margin-top:16px; color: var(--text-muted);">Micro-level buyer psychology and conversion triggers.</p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+
+        // ==========================================
+        // CINEMATIC DROP TYPEWRITER
+        // ==========================================
+        const cinematicTypewriter = (element, callback) => {
+            const part1 = "ChudGPT may give answers,";
+            const part2 = "BUT WE HELP BUILD EMPIRES.";
+            let currentText = "";
+            let i = 0;
+            
+            const typeLoop = setInterval(() => {
+                if (i < part1.length) {
+                    currentText += part1[i]; 
+                    element.innerText = currentText + chars[Math.floor(Math.random() * chars.length)];
+                    i++;
+                } else {
+                    clearInterval(typeLoop);
+                    element.innerText = currentText; 
+                    
+                    // The Suspense Pause (gives the final reviews time to flash)
+                    setTimeout(() => {
+                        
+                        const splashScreen = document.getElementById('splash-screen');
+                        splashScreen.classList.add('flashbang');
+                        element.classList.add('shake-hard');
+                        
+                        element.innerHTML = `${part1} <br><br> <span style="font-size: 3.5vw; text-shadow: 0 0 20px #ffffff;">${part2}</span>`;
+                        
+                        if(callback) setTimeout(callback, 2000); 
+
+                    }, 1500); // 1.5 seconds of dead silence suspense
+                }
+            }, 80); // Deliberate typing speed to build tension
+        };
+
+        window.addEventListener('load', () => {
+            const splashTextEl = document.getElementById('splash-intro');
+            
+            cinematicTypewriter(splashTextEl, () => {
+                const splash = document.getElementById('splash-screen');
+                splash.classList.add('hidden'); 
+                setTimeout(() => splash.style.display = 'none', 600); 
+            });
+        });
+
+        // ==========================================
+        // COLOR GLITCH SCRAMBLE (For Scroll Headers)
+        // ==========================================
+        const glitchColors = ['#FF00C1', '#00FFF9', '#EAB308', '#10B981', '#8B5CF6'];
+        const scrambleAndColor = (element, targetText, speed = 15, finalColor = 'var(--text-main)', callback) => {
+            let iterations = 0;
+            const interval = setInterval(() => {
+                const randomColor = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+                element.style.color = randomColor;
+                element.style.textShadow = `0 0 15px ${randomColor}`;
+
+                element.innerText = targetText.split("").map((letter, index) => {
+                    if(index < iterations) return targetText[index];
+                    if(targetText[index] === " ") return " ";
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join("");
+                
+                if(iterations >= targetText.length) {
+                    clearInterval(interval);
+                    element.style.color = finalColor;
+                    element.style.textShadow = 'none';
+                    if(callback) callback();
+                }
+                iterations += 1/3;
+            }, speed);
+        };
+
+        // ==========================================
+        // TABS, CURSOR & FORMS
+        // ==========================================
+        const navLinks = document.querySelectorAll('.nav-categories a');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const body = document.body;
+        const themes = ['forecast', 'market', 'audience', 'settings'];
+
+        navLinks.forEach((link, index) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                navLinks.forEach(l => l.classList.remove('active'));
+                tabContents.forEach(t => t.classList.remove('active-tab'));
+                link.classList.add('active');
+                if(tabContents[index]) tabContents[index].classList.add('active-tab');
+                body.setAttribute('data-theme', themes[index]);
+            });
+        });
+
+        document.querySelectorAll('.panel').forEach(panel => {
+            panel.addEventListener('mousemove', e => {
+                const rect = panel.getBoundingClientRect();
+                panel.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                panel.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+        const problemInput = document.getElementById('core_problem');
+        const pulseLine = document.getElementById('ai-pulse');
+        const pulseStatus = document.getElementById('pulse-status');
+
+        problemInput.addEventListener('input', (e) => {
+            const length = e.target.value.length;
+            if (length === 0) { pulseLine.style.width = '0%'; pulseStatus.innerText = 'Awaiting context'; pulseLine.style.background = '#EF4444'; } 
+            else if (length < 20) { pulseLine.style.width = '30%'; pulseLine.style.background = '#EF4444'; pulseStatus.innerText = 'Need more detail'; } 
+            else if (length < 50) { pulseLine.style.width = '60%'; pulseLine.style.background = '#F59E0B'; pulseStatus.innerText = 'Analyzing parameters'; } 
+            else { pulseLine.style.width = '100%'; pulseLine.style.background = '#10B981'; pulseStatus.innerText = 'Optimal context reached'; }
+        });
+
+        // FROSTED CIPHER LOADER
+        const initBtn = document.getElementById('init-btn');
+        const cipherScreen = document.getElementById('cipher-screen');
+        const cipherOutput = document.getElementById('cipher-output');
+        const form = document.getElementById('strategy-form');
+        
+        initBtn.addEventListener('click', () => {
+            if(!form.checkValidity()) { form.reportValidity(); return; }
+            cipherScreen.classList.add('active');
+            let phaseIndex = 0;
+            const phases = ["EXTRACTING NICHE...", "ANALYZING NODES...", "COMPILING FORECAST...", "STRATEGY READY."];
+            
+            const runPhases = () => {
+                if (phaseIndex < phases.length) {
+                    let iterations = 0;
+                    const targetText = phases[phaseIndex];
+                    const interval = setInterval(() => {
+                        cipherOutput.innerText = targetText.split("").map((letter, index) => {
+                            if(index < iterations) return targetText[index];
+                            if(targetText[index] === " ") return " ";
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        }).join("");
+                        if(iterations >= targetText.length) {
+                            clearInterval(interval);
+                            phaseIndex++; setTimeout(runPhases, 600);
+                        }
+                        iterations += 1/3;
+                    }, 30);
+                } else {
+                    setTimeout(() => {
+                        cipherScreen.classList.remove('active');
+                        alert("Backend connected: Check python terminal!");
+                    }, 500);
+                }
+            };
+            runPhases();
+        });
+
+        // CHART.JS
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        const marketChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                datasets: [{ data: [12, 19, 15, 25, 22, 30, 28], borderColor: '#111827', borderWidth: 2, tension: 0.4, pointBackgroundColor: '#EAB308', pointBorderColor: '#fff', pointRadius: 4 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#9CA3AF' } }, y: { display: false } } }
+        });
+
+        // COLOR GLITCH ON SCROLL
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('decoded')) {
+                    entry.target.classList.add('decoded');
+                    scrambleAndColor(entry.target, entry.target.getAttribute('data-target'), 20, 'var(--text-main)');
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.color-glitch-text').forEach(header => observer.observe(header));
+
+        // FAQ ACCORDION LOGIC
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                document.querySelectorAll('.faq-question span').forEach(span => span.innerText = '+');
+                if (!isOpen) {
+                    item.classList.add('open');
+                    item.querySelector('.faq-question span').innerText = '−';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
