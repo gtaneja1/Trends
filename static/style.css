@@ -1,104 +1,225 @@
-/* 
-========================================================================
-   SALES + MARKETING FORECAST - CORE DESIGN SYSTEM & STYLING SKELETON
-========================================================================
-   Aesthetics: Modern Space-Tech / Dark Mode
-   Key Visual Elements: Glassmorphism, Subtle Gradients, Glowing Accents
-========================================================================
-*/
+/* ========================================================================
+   NEUROSTRAT - FLUID MINIMALISM + GLITCH INTERACTIVITY
+======================================================================== */
 
-/* 
-   1. DESIGN TOKENS (CSS Variables)
-   Defines the cohesive color scheme, spacing, and transitions.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+
 :root {
-    /* Color Palette */
-    --bg-dark-main: #0B0A12;      /* Deep outer-space indigo/black */
-    --bg-dark-panel: #141221;     /* Rich violet-tinted panel background */
-    --border-color: #2D2746;      /* Subtle border color */
-    --accent-glow: #8B5CF6;       /* Electric Violet secondary glow */
-    --accent-cyan: #06B6D4;       /* Neon Cyan primary action */
-    --accent-success: #10B981;    /* Vibrant Emerald for positive indicators */
-    --text-primary: #F3F4F6;      /* Off-white readable text */
-    --text-secondary: #9CA3AF;    /* Cool grey description text */
+    --bg-main: #F4F5F7;        
+    --bg-panel: #FFFFFF;       
+    --text-main: #111827;      
+    --text-muted: #6B7280;     
+    --border-light: #E5E7EB;   
     
-    /* Effects & Layout */
-    --glass-blur: blur(12px);
-    --border-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-glow));
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --brand-primary: #FF9A9E;
+    --brand-secondary: #FECFEF;
+    --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    
+    --transition-slow: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 
-   2. GLOBAL STYLES & RESET
-   Ensures base spacing, default typography, and root alignment.
-*/
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+[data-theme="market"] {
+    --brand-primary: #A1C4FD;
+    --brand-secondary: #C2E9FB;
+    --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
 }
 
-body {
-    background-color: var(--bg-dark-main);
-    color: var(--text-primary);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    /* Background grid/ambient lighting details will be added here */
+[data-theme="audience"] {
+    --brand-primary: #D4FC79;
+    --brand-secondary: #96E6A1;
+    --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
 }
 
-/* 
-   3. APP CONTAINER & GRID SYSTEM
-   Defines the three-panel layout (Input -> Trends -> Results).
-*/
-.app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 24px;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background-color: var(--bg-main); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; transition: var(--transition-slow); overflow-x: hidden; }
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main); letter-spacing: -0.5px; }
+
+/* =========================================
+   THE DRAMATIC B&W SPLASH SCREEN
+========================================= */
+#splash-screen {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #020202; 
+    z-index: 9999; display: flex; justify-content: center; align-items: center;
+    overflow: hidden;
 }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1.5fr; /* 3-Column layout */
-    gap: 24px;
-    flex-grow: 1;
+/* Cinematic VHS Scanlines */
+.scanlines {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
+    background-size: 100% 4px; z-index: 2; pointer-events: none; opacity: 0.6;
 }
 
-/* Responsive query for smaller desktop/tablet views */
-@media (max-width: 1200px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
+/* The Flashbang Effect */
+.flashbang { animation: flashbangAnim 0.6s ease-out forwards; }
+@keyframes flashbangAnim {
+    0% { background: #FFFFFF; filter: invert(1); }
+    10% { background: #FFFFFF; filter: invert(1); }
+    100% { background: #020202; filter: invert(0); }
 }
 
-/* 
-   4. GLASSMORPHIC PANELS & CARDS
-   Base classes for the glass dashboards and visual blocks.
-*/
+/* The Screen Shake */
+.shake-hard { animation: shakeAnim 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shakeAnim {
+    10%, 90% { transform: translate3d(-3px, 3px, 0) scale(1.02); }
+    20%, 80% { transform: translate3d(5px, -5px, 0) scale(1.02); }
+    30%, 50%, 70% { transform: translate3d(-10px, 8px, 0) scale(1.02); }
+    40%, 60% { transform: translate3d(10px, -8px, 0) scale(1.02); }
+    100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* CRT Collapse Transition */
+#splash-screen.hidden { animation: crtOff 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+@keyframes crtOff {
+    0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
+    40% { transform: scale(1, 0.005); opacity: 1; filter: brightness(10); }
+    100% { transform: scale(0, 0.005); opacity: 0; filter: brightness(0); }
+}
+
+/* Classic Typewriter Font */
+.glitch-intro {
+    font-family: 'Courier New', Courier, monospace; 
+    font-size: 2.2vw; 
+    font-weight: 700;
+    color: #FFFFFF; 
+    letter-spacing: 2px;
+    text-align: center; 
+    max-width: 900px; 
+    line-height: 1.5; 
+    padding: 0 40px;
+    position: relative; 
+    z-index: 10;
+    text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+
+/* =========================================
+   SUBLIMINAL FLASHING REVIEWS (UPDATED POSITIONS)
+========================================= */
+.splash-reviews { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+.flash-review { 
+    position: absolute; 
+    font-family: 'Courier New', Courier, monospace; 
+    font-weight: 700; 
+    font-size: 1.2vw; 
+    color: transparent; 
+    text-align: center; 
+    max-width: 350px; 
+    opacity: 0; 
+    filter: blur(10px);
+    text-transform: uppercase;
+}
+
+/* Pushed securely into the corners */
+.flash-review.r1 { top: 10%; left: 5%; animation: whiteFlash 1.2s 0.2s forwards; }
+.flash-review.r2 { bottom: 15%; right: 5%; animation: whiteFlash 1.2s 0.8s forwards; }
+.flash-review.r3 { top: 75%; left: 8%; animation: whiteFlash 1.2s 1.4s forwards; }
+.flash-review.r4 { top: 12%; right: 5%; animation: whiteFlash 1.2s 2.0s forwards; }
+.flash-review.r5 { bottom: 10%; left: 35%; animation: whiteFlash 1.2s 2.6s forwards; }
+
+@keyframes whiteFlash {
+    0% { opacity: 0; filter: blur(10px); transform: scale(0.95); }
+    20% { opacity: 0.9; filter: blur(0px); transform: scale(1); color: #FFFFFF; text-shadow: 0 0 10px #FFFFFF; }
+    80% { opacity: 0.9; filter: blur(0px); transform: scale(1); color: #FFFFFF; text-shadow: 0 0 20px #FFFFFF; }
+    100% { opacity: 0; filter: blur(15px); transform: scale(1.05); color: transparent; }
+}
+
+/* =========================================
+   LAYOUT, BENTO CARDS & FORMS (LIGHT MODE)
+========================================= */
+.app-layout { display: flex; min-height: 100vh; }
+.app-container { flex-grow: 1; padding: 40px; position: relative; max-height: 100vh; overflow-y: auto; }
+
 .panel {
-    background: rgba(20, 18, 33, 0.65);
-    border: 1px solid var(--border-color);
-    backdrop-filter: var(--glass-blur);
-    border-radius: 16px;
-    padding: 24px;
-    /* Soft shadow and hover transitions */
+    background: var(--bg-panel); border: 1px solid var(--border-light);
+    border-radius: 24px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; 
 }
+.panel::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0,0,0,0.04), transparent 40%);
+    z-index: 0; pointer-events: none; opacity: 0; transition: opacity 0.5s ease;
+}
+.panel:hover::before { opacity: 1; }
+.panel > * { position: relative; z-index: 1; }
 
-/* 
-   5. FORM STYLING
-   Inputs, selects, textareas, checkboxes, and buttons.
-*/
+.top-bar { margin-bottom: 40px; }
+.top-bar h1 { font-size: 42px; margin-bottom: 8px; }
+.top-bar p { color: var(--text-muted); font-size: 16px; }
 
-/* 
-   6. CHART & INDICATORS STYLING
-   Grid alignment for metrics numbers and Chart.js container.
-*/
+label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 8px 0; }
+input, textarea { width: 100%; padding: 16px; background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; font-family: inherit; font-size: 15px; color: var(--text-main); transition: all 0.3s ease; outline: none; resize: vertical; }
+input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(0,0,0,0.02); }
 
-/* 
-   7. LOADER & ANIMATION KEYFRAMES
-   Pulsing effects for the 5-step analysis pipeline.
-*/
+.pulse-container { margin-top: 8px; display: flex; align-items: center; gap: 12px; }
+.pulse-track { flex-grow: 1; height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden; position: relative; }
+.pulse-line { height: 100%; width: 0%; background: #EF4444; border-radius: 2px; transition: all 0.4s ease; }
+.pulse-text { font-size: 12px; font-weight: 600; color: var(--text-muted); }
 
-/* 
-   8. FORECAST & MARKETING TABS STYLING
-   Content organization for next steps, copywriting guides, and checklists.
-*/
+.funky-btn {
+    width: 100%; margin-top: 32px; padding: 18px; background: var(--brand-gradient);
+    color: var(--text-main); border: none; border-radius: 12px; font-size: 16px; font-weight: 800;
+    cursor: pointer; transition: var(--transition-slow); display: inline-block; text-align: center; text-decoration: none;
+}
+.funky-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+.sidebar { width: 280px; margin: 24px 0 24px 24px; display: flex; flex-direction: column; position: sticky; top: 24px; height: calc(100vh - 48px); z-index: 50; }
+.brand h2 { font-size: 24px; margin-bottom: 40px; }
+.nav-categories a { display: block; text-decoration: none; color: var(--text-muted); padding: 14px 20px; border-radius: 100px; font-weight: 600; margin-bottom: 8px; transition: all 0.3s ease; }
+.nav-categories a.active { background: var(--text-main); color: #fff; }
+.tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
+.tab-content.active-tab { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.grid-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-bottom: 40px; }
+
+.cipher-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(244, 245, 247, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    border-radius: 24px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+}
+.cipher-overlay.active { opacity: 1; pointer-events: all; }
+.cipher-text { font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: 2px; }
+
+/* =========================================
+   SCROLLABLE SECTIONS & PHOTOS
+========================================= */
+.right-column-stack { display: flex; flex-direction: column; gap: 24px; }
+.chromatic-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease, filter 0.2s ease; }
+.chromatic-wrapper:hover .chromatic-img { transform: scale(1.05); filter: drop-shadow(4px 0 0 #FF00C1) drop-shadow(-4px 0 0 #00FFF9); }
+
+.article-card { padding: 0; display: flex; flex-direction: column; text-decoration: none; }
+.article-img-wrapper { height: 180px; overflow: hidden; position: relative; border-radius: 24px 24px 0 0; }
+.article-content { padding: 24px; }
+.article-tag { display: inline-block; padding: 6px 12px; background: var(--bg-main); border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-main); }
+.article-title { font-size: 20px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+
+.scroll-section { padding: 60px 0; border-top: 1px solid var(--border-light); }
+.section-header { font-size: 36px; margin-bottom: 40px; text-align: center; transition: color 0.1s ease, text-shadow 0.1s ease; }
+.strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+
+.hover-card { text-decoration: none; color: inherit; display: block; transition: transform 0.2s ease, filter 0.2s ease; }
+.hover-card:hover { transform: translateY(-5px); text-shadow: 2px 0px 0px #FF00C1, -2px 0px 0px #00FFF9; border-color: var(--brand-primary); }
+
+.testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.review-card { display: flex; flex-direction: column; gap: 16px; justify-content: space-between; }
+.stars { color: #F59E0B; font-size: 18px; letter-spacing: 2px; }
+.review-text { font-size: 16px; line-height: 1.6; color: var(--text-muted); font-style: italic; }
+.reviewer-info { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-light); }
+.reviewer { font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+
+.faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.faq-item { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 16px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+.faq-question { padding: 24px; font-size: 18px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+.faq-answer { max-height: 0; padding: 0 24px; overflow: hidden; transition: all 0.4s cubic-bezier(0, 1, 0, 1); color: var(--text-muted); line-height: 1.6; }
+.faq-item.open { border-color: var(--brand-primary); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+.faq-item.open .faq-answer { max-height: 500px; padding: 0 24px 24px 24px; transition: all 0.4s ease-in-out; }
+.faq-item::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 3px; background: var(--brand-gradient); transition: width 0.4s ease; }
+.faq-item.open::after { width: 100%; }
+
+.cta-banner { display: flex; flex-wrap: wrap; text-align: left; padding: 0; background: var(--bg-panel); border-radius: 24px; position: relative; overflow: hidden; border: 1px solid var(--border-light); align-items: stretch; }
+.cta-content { padding: 60px 40px; flex: 1; min-width: 300px; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+.cta-banner h2 { font-size: 42px; margin-bottom: 20px; }
+.cta-banner p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; }
+.cta-image-wrapper { flex: 1; min-width: 300px; min-height: 350px; overflow: hidden; position: relative; }
