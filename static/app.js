@@ -2,87 +2,46 @@
  * ========================================================================
  *   SALES + MARKETING FORECAST - FRONTEND CONTROLLER (app.js)
  * ========================================================================
- *   Establishes connection between the Flask backend (/api/analyze)
- *   and your UI elements, safely handling empty HTML shells.
+ *   Bridges your premium NeuroStrat UI with the scraping and synthesis
+ *   pipelines served by Flask on '/api/analyze'.
  * ========================================================================
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[Growth Matrix Active] Frontend controller connected and running.");
+    console.log("[NeuroStrat Active] Frontend controller connected and running.");
 
-    // 1. DOM Element Cache References (Safe-checked)
-    const form = document.getElementById('forecast-form');
-    
-    // 2. Initialize Charts (Only if canvas elements exist in HTML)
-    initTrendsCharts();
-
-    // 3. Register Event Listeners (Safe-checked)
-    if (form) {
-        form.addEventListener('submit', handleFormSubmit);
-        console.log(" -> Registered form submit event listener on #forecast-form.");
-    } else {
-        console.log(" -> Standing by. Awaiting text boxes and #forecast-form elements in index.html.");
-        console.log(" -> TIP: You can test the Flask connection live right now in your browser console by typing:");
-        console.log("    window.launchAnalysis({niche: 'streetwear', keyword: 'jacket', subreddit: 'streetwear', ticker: 'NKE', problem: 'Competitors selling cheap polyester.'});");
-    }
-
-    // Expose global test connection handle
-    window.launchAnalysis = debugTestConnection;
+    // Expose the analysis starter globally so it can be called from index.html
+    window.handleStrategySynthesis = triggerLiveAnalysis;
 });
 
 /**
- * Initializes and configures Chart.js line and bar charts.
- * Safely checks if targeted canvas tags exist before initializing.
+ * Triggers the live analysis by capturing form inputs, sending a POST request 
+ * to '/api/analyze', and populating the results panel.
  */
-function initTrendsCharts() {
-    const stockCanvas = document.getElementById('stockChart');
-    const socialCanvas = document.getElementById('socialChart');
+async function triggerLiveAnalysis() {
+    console.log("[NeuroStrat] Launching backend scraping and AI synthesis...");
 
-    if (!stockCanvas && !socialCanvas) {
-        console.log(" -> Canvas tags (#stockChart / #socialChart) not present in HTML. Bypassing Chart.js init.");
-        return;
-    }
-
-    // If Chart.js library is loaded and canvases exist, configure them here
-    console.log(" -> Chart canvas containers detected. Initializing Chart.js dashboards...");
-}
-
-/**
- * Handles the submit action of the inputs.
- * Validates data and sends it to `/api/analyze` via Fetch API.
- */
-async function handleFormSubmit(event) {
-    event.preventDefault();
-    console.log("[Growth Matrix] Form submitted. Extracting parameter parameters...");
-
-    // Grabbing DOM values safely
-    const nicheInput = document.getElementById('niche-input');
-    const keywordInput = document.getElementById('keyword-input');
-    const subredditInput = document.getElementById('subreddit-input');
-    const tickerInput = document.getElementById('ticker-input');
-    const problemInput = document.getElementById('problem-input');
-    const submitBtn = document.getElementById('submit-btn');
+    // 1. Get DOM inputs safely
+    const fieldInput = document.getElementById('business_field');
+    const problemInput = document.getElementById('core_problem');
+    const audienceInput = document.getElementById('target_audience');
+    const resultsPanel = document.getElementById('strategy-results-panel');
+    const initBtn = document.getElementById('init-btn');
 
     const params = {
-        niche: nicheInput ? nicheInput.value.trim() : "streetwear apparel",
-        keyword: keywordInput ? keywordInput.value.trim() : "corduroy",
-        subreddit: subredditInput ? subredditInput.value.trim() : "streetwear",
-        ticker: tickerInput ? tickerInput.value.trim() : "NKE",
-        problem: problemInput ? problemInput.value.trim() : "Competitors selling cheap copies."
+        niche: fieldInput ? fieldInput.value.trim() : "Sustainable Apparel",
+        problem: problemInput ? problemInput.value.trim() : "Increasing customer acquisition costs.",
+        audience: audienceInput ? audienceInput.value.trim() : "Gen Z females"
     };
 
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "SYNTHESIZING MATRIX...";
+    if (initBtn) {
+        initBtn.disabled = true;
+        initBtn.textContent = "SYNTHESIZING STRATEGIES...";
     }
 
-    // Visual loading animations
-    updatePipelineLoader(1, 'active');
-
     try {
-        console.log(" -> Launching analysis pipelines for:", params);
+        console.log(" -> Dispatching parameters to Flask:", params);
         
-        updatePipelineLoader(2, 'active');
         const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: {
@@ -91,123 +50,86 @@ async function handleFormSubmit(event) {
             body: JSON.stringify(params)
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
         
         if (data.status === 'success') {
-            console.log("[Growth Matrix Success] Scraped & Synthesized successfully!");
-            updatePipelineLoader(4, 'complete');
-            updatePipelineLoader(5, 'complete');
-            
-            // Populating UI cards
+            console.log("[NeuroStrat Success] Strategic Playbook compiled successfully!");
             renderForecastResults(data);
         } else {
-            throw new Error(data.message || 'Pipeline failed');
+            throw new Error(data.message || 'Scraper or synthesis pipeline failed.');
         }
 
     } catch (err) {
-        console.error("[Growth Matrix Error] Connection failed:", err);
-        alert("Flask Pipeline Error: " + err.message);
-        
-        updatePipelineLoader(1, 'error');
-        updatePipelineLoader(2, 'error');
+        console.error("[NeuroStrat Error] Execution failed:", err);
+        alert("Strategic Sync Error: " + err.message + "\n\nEnsure Flask is running and check your Python terminal for details.");
     } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "LAUNCH GROWTH ENGINE";
+        if (initBtn) {
+            initBtn.disabled = false;
+            initBtn.textContent = "Initialize AI Strategy";
         }
     }
 }
 
 /**
- * Simulates or updates progress indicators for the 5-step pipeline.
- * Safely looks for list elements before executing toggles.
- */
-function updatePipelineLoader(stepNum, status) {
-    const stepEl = document.getElementById(`step-${stepNum}`);
-    if (!stepEl) return;
-
-    if (status === 'active') {
-        stepEl.className = 'step active';
-        stepEl.querySelector('.step-status').textContent = 'Scanning...';
-    } else if (status === 'complete') {
-        stepEl.className = 'step complete';
-        stepEl.querySelector('.step-status').textContent = 'Done';
-    } else if (status === 'error') {
-        stepEl.className = 'step pending';
-        stepEl.querySelector('.step-status').textContent = 'Error';
-    }
-}
-
-/**
- * Parses and renders the structured JSON forecast returned by the Gemini API.
- * Safely updates text blocks, lists, and charts if they exist in templates.
+ * Renders the consolidated scraper results and the Gemini playbook on the screen.
  */
 function renderForecastResults(data) {
-    console.log("[Forecast Data Received]", data);
+    console.log("[Forecast Data Ingested]", data);
 
-    // 1. Safe binding for Stock Quote Indicators
-    const widgetPrice = document.getElementById('widget-ticker-price');
-    if (widgetPrice) {
-        widgetPrice.textContent = `$${data.market.current_price.toFixed(2)}`;
-    }
-
-    // 2. Safe binding for Niche Insights Markdown
+    const resultsPanel = document.getElementById('strategy-results-panel');
     const insightsText = document.getElementById('insights-text');
+    const stepsContainer = document.getElementById('steps-card-container');
+
+    // 1. Render Niche Insights text
     if (insightsText) {
-        insightsText.textContent = data.strategy.niche_insights;
+        // If the AI key is active, it returns live strategies; otherwise it returns custom fallbacks
+        insightsText.textContent = data.strategy.niche_insights || "Insights successfully processed.";
     }
 
-    // 3. Safe binding for Actionable Next Steps cards
-    const stepsContainer = document.getElementById('steps-card-container');
-    if (stepsContainer) {
+    // 2. Render Actionable Next Steps cards
+    if (stepsContainer && data.strategy.next_steps) {
         stepsContainer.innerHTML = '';
+        
         data.strategy.next_steps.forEach(step => {
             const card = document.createElement('div');
-            card.className = 'step-card';
+            card.className = 'panel hover-card';
+            card.style.display = 'flex';
+            card.style.flexDirection = 'column';
+            card.style.gap = '12px';
+            card.style.transition = 'all 0.3s ease';
+            card.style.cursor = 'pointer';
+            
             card.innerHTML = `
-                <h4>${step.title} (${step.impact} Impact / ${step.difficulty} Difficulty)</h4>
-                <p>${step.description}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
+                    <h4 style="font-size: 18px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">${step.title}</h4>
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; background: var(--bg-main); border-radius: 100px;">
+                        ${step.impact} Impact
+                    </span>
+                </div>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted);">${step.description}</p>
+                <div style="margin-top: auto; font-size: 12px; font-weight: 700; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.5px;">
+                    Difficulty: ${step.difficulty}
+                </div>
             `;
+            
+            // Add mouse-move parallax effect listener to new cards
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+            
             stepsContainer.appendChild(card);
         });
     }
 
-    console.log(" -> Completed binding strategies to page elements.");
-}
-
-/**
- * Console Debugging Tool.
- * Directly calls the Flask backend and prints the AI generated sales playbook in console.
- */
-async function debugTestConnection(testParams) {
-    const defaultParams = {
-        niche: "streetwear apparel",
-        keyword: "corduroy",
-        subreddit: "streetwear",
-        ticker: "NKE",
-        problem: "Sales are down because competitors sell cheap polyester copies."
-    };
-    
-    const params = Object.assign({}, defaultParams, testParams);
-    
-    console.log("\n[TEST PIPELINE] Connecting to Flask server...");
-    console.log(" -> Request Parameters:", params);
-    
-    try {
-        const response = await fetch('/api/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(params)
-        });
-        
-        const data = await response.json();
-        console.log("\n[TEST PIPELINE SUCCESS] Connected successfully!");
-        console.log(" -> Social keywords & hashtags scraped:", data.social);
-        console.log(" -> Competitor Market Prices pulled:", data.market);
-        console.log(" -> Live News & Sentiments evaluated:", data.news);
-        console.log(" -> Gemini AI Growth Playbook Synthesized:\n", data.strategy);
-        return data;
-    } catch (err) {
-        console.error("\n[TEST PIPELINE ERROR] Connection failed:", err);
+    // 3. Display Results Panel & Scroll Into View smoothly
+    if (resultsPanel) {
+        resultsPanel.style.display = 'block';
+        resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
