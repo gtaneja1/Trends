@@ -44,14 +44,12 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     overflow: hidden;
 }
 
-/* Cinematic VHS Scanlines */
 .scanlines {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
     background-size: 100% 4px; z-index: 2; pointer-events: none; opacity: 0.6;
 }
 
-/* The Flashbang Effect */
 .flashbang { animation: flashbangAnim 0.6s ease-out forwards; }
 @keyframes flashbangAnim {
     0% { background: #FFFFFF; filter: invert(1); }
@@ -59,7 +57,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     100% { background: #020202; filter: invert(0); }
 }
 
-/* The Screen Shake */
 .shake-hard { animation: shakeAnim 0.5s cubic-bezier(.36,.07,.19,.97) both; }
 @keyframes shakeAnim {
     10%, 90% { transform: translate3d(-3px, 3px, 0) scale(1.02); }
@@ -69,7 +66,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     100% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
-/* CRT Collapse Transition */
 #splash-screen.hidden { animation: crtOff 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
 @keyframes crtOff {
     0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
@@ -77,7 +73,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     100% { transform: scale(0, 0.005); opacity: 0; filter: brightness(0); }
 }
 
-/* Classic Typewriter Font */
 .glitch-intro {
     font-family: 'Courier New', Courier, monospace; 
     font-size: 2.2vw; 
@@ -93,9 +88,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     text-shadow: 0 0 10px rgba(255,255,255,0.4);
 }
 
-/* =========================================
-   SUBLIMINAL FLASHING REVIEWS (UPDATED POSITIONS)
-========================================= */
 .splash-reviews { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 .flash-review { 
     position: absolute; 
@@ -110,7 +102,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     text-transform: uppercase;
 }
 
-/* Pushed securely into the corners */
 .flash-review.r1 { top: 10%; left: 5%; animation: whiteFlash 1.2s 0.2s forwards; }
 .flash-review.r2 { bottom: 15%; right: 5%; animation: whiteFlash 1.2s 0.8s forwards; }
 .flash-review.r3 { top: 75%; left: 8%; animation: whiteFlash 1.2s 1.4s forwards; }
@@ -125,7 +116,7 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
 }
 
 /* =========================================
-   LAYOUT, BENTO CARDS & FORMS (LIGHT MODE)
+   LAYOUT, BENTO CARDS & FORMS
 ========================================= */
 .app-layout { display: flex; min-height: 100vh; }
 .app-container { flex-grow: 1; padding: 40px; position: relative; max-height: 100vh; overflow-y: auto; }
@@ -170,7 +161,7 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
 .tab-content.active-tab { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.grid-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-bottom: 40px; }
+.grid-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-bottom: 40px; transition: opacity 0.5s ease; }
 
 .cipher-overlay {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -180,6 +171,63 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 }
 .cipher-overlay.active { opacity: 1; pointer-events: all; }
 .cipher-text { font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: 2px; }
+
+/* =========================================
+   THE EXECUTIVE BRIEFING (LINEAR PLAYBOOK)
+========================================= */
+#playbook-result { display: none; animation: fadeIn 0.8s ease forwards; max-width: 900px; margin: 0 auto; }
+.briefing-header { font-size: 48px; margin-bottom: 16px; border-bottom: 2px solid var(--text-main); padding-bottom: 24px; }
+
+.briefing-section { margin-bottom: 60px; }
+.section-label { 
+    font-family: 'Courier New', Courier, monospace; 
+    font-size: 14px; 
+    color: var(--brand-primary); 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    margin-bottom: 24px; 
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-label::after { content: ''; flex-grow: 1; height: 1px; background: var(--border-light); }
+
+/* Phase 1: Summary */
+.executive-summary-text { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 24px; 
+    line-height: 1.6; 
+    color: var(--text-main); 
+}
+
+/* Phase 2: Proof Chart */
+.proof-container {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 32px;
+    height: 350px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+}
+
+/* Phase 3: Tactical Steps */
+.linear-step { 
+    display: flex; 
+    gap: 32px; 
+    padding: 32px 0; 
+    border-bottom: 1px solid var(--border-light); 
+}
+.linear-step:last-child { border-bottom: none; }
+.step-num { 
+    font-family: 'Courier New', Courier, monospace; 
+    font-size: 48px; 
+    font-weight: 700; 
+    color: var(--border-light); 
+    line-height: 1; 
+}
+.step-content h4 { font-size: 24px; margin-bottom: 12px; }
+.step-content p { color: var(--text-muted); font-size: 16px; line-height: 1.6; }
 
 /* =========================================
    SCROLLABLE SECTIONS & PHOTOS

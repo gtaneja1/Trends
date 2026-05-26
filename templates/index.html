@@ -21,8 +21,7 @@
             <div class="flash-review r5">"The audience psychology data is frighteningly accurate." - Chloe S.</div>
         </div>
 
-        <h1 class="glitch-intro" id="splash-intro">
-            </h1>
+        <h1 class="glitch-intro" id="splash-intro"></h1>
     </div>
 
     <div class="app-layout">
@@ -52,7 +51,7 @@
                 
                 <div id="tab-forecast" class="tab-content active-tab">
                     
-                    <div class="grid-layout">
+                    <div class="grid-layout" id="input-grid">
                         <section class="panel form-panel">
                             <h3>Strategy Parameters</h3>
                             <form id="strategy-form" action="/submit" method="POST">
@@ -95,7 +94,56 @@
                         </div>
                     </div>
 
-                    <section class="scroll-section">
+                    <div id="playbook-result">
+                        <h2 class="briefing-header">Strategic Briefing</h2>
+                        
+                        <div class="briefing-section">
+                            <h3 class="section-label">01 // Executive Summary</h3>
+                            <p class="executive-summary-text">
+                                The market for sustainable fashion is experiencing high saturation with low-effort eco-branding. Your core problem of low engagement stems from consumer fatigue regarding generic sustainability claims. The data indicates a heavy shift towards authentic, high-quality manufacturing. To break through the noise, you must pivot positioning away from "eco-friendly" and toward "generational durability."
+                            </p>
+                        </div>
+
+                        <div class="briefing-section">
+                            <h3 class="section-label">02 // Empirical Proof</h3>
+                            <div class="proof-container">
+                                <canvas id="proofChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="briefing-section">
+                            <h3 class="section-label">03 // Tactical Blueprint</h3>
+                            
+                            <div class="linear-step">
+                                <div class="step-num">01</div>
+                                <div class="step-content">
+                                    <h4>Launch a Premium 'Heavyweight' Limited Line</h4>
+                                    <p>Directly counter cheaper competitors by introducing a limited run focusing on premium materials. Leverage the high social forum interest for #fashiondesign to position this as an enthusiast product rather than just a sustainable one.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="linear-step">
+                                <div class="step-num">02</div>
+                                <div class="step-content">
+                                    <h4>Transparent Cost-Per-Wear Breakdown</h4>
+                                    <p>Create a simple infographic comparing your product's lifespan against cheaper competitors. Demonstrate that paying 1.5x more upfront saves 3x money over the year, targeting the specific consumer fatigue regarding low quality.</p>
+                                </div>
+                            </div>
+
+                            <div class="linear-step">
+                                <div class="step-num">03</div>
+                                <div class="step-content">
+                                    <h4>Micro-Influencer Seeding Campaign</h4>
+                                    <p>Send free samples to top community accounts. Leverage the organic interest to generate high-resolution user-created content (UCC) emphasizing tactile details, heavy stitching, and structural fit.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="funky-btn" style="width: auto; padding: 16px 40px;" onclick="location.reload()">← Run New Analysis</button>
+
+                    </div>
+
+                    <section class="scroll-section" style="margin-top: 80px;">
                         <h2 class="section-header color-glitch-text" data-target="The Strategic Advantage.">The Strategic Advantage.</h2>
                         <div class="strategy-grid">
                             <a href="#" class="panel hover-card">
@@ -220,9 +268,7 @@
                     clearInterval(typeLoop);
                     element.innerText = currentText; 
                     
-                    // The Suspense Pause (gives the final reviews time to flash)
                     setTimeout(() => {
-                        
                         const splashScreen = document.getElementById('splash-screen');
                         splashScreen.classList.add('flashbang');
                         element.classList.add('shake-hard');
@@ -231,14 +277,13 @@
                         
                         if(callback) setTimeout(callback, 2000); 
 
-                    }, 1500); // 1.5 seconds of dead silence suspense
+                    }, 1500);
                 }
-            }, 80); // Deliberate typing speed to build tension
+            }, 80); 
         };
 
         window.addEventListener('load', () => {
             const splashTextEl = document.getElementById('splash-intro');
-            
             cinematicTypewriter(splashTextEl, () => {
                 const splash = document.getElementById('splash-screen');
                 splash.classList.add('hidden'); 
@@ -247,7 +292,7 @@
         });
 
         // ==========================================
-        // COLOR GLITCH SCRAMBLE (For Scroll Headers)
+        // COLOR GLITCH SCRAMBLE
         // ==========================================
         const glitchColors = ['#FF00C1', '#00FFF9', '#EAB308', '#10B981', '#8B5CF6'];
         const scrambleAndColor = (element, targetText, speed = 15, finalColor = 'var(--text-main)', callback) => {
@@ -312,14 +357,18 @@
             else { pulseLine.style.width = '100%'; pulseLine.style.background = '#10B981'; pulseStatus.innerText = 'Optimal context reached'; }
         });
 
-        // FROSTED CIPHER LOADER
+        // ==========================================
+        // FROSTED CIPHER LOADER & RESULT REVEAL
+        // ==========================================
         const initBtn = document.getElementById('init-btn');
         const cipherScreen = document.getElementById('cipher-screen');
         const cipherOutput = document.getElementById('cipher-output');
         const form = document.getElementById('strategy-form');
+        let proofChartInstance = null; // Hold chart reference
         
         initBtn.addEventListener('click', () => {
             if(!form.checkValidity()) { form.reportValidity(); return; }
+            
             cipherScreen.classList.add('active');
             let phaseIndex = 0;
             const phases = ["EXTRACTING NICHE...", "ANALYZING NODES...", "COMPILING FORECAST...", "STRATEGY READY."];
@@ -343,14 +392,35 @@
                 } else {
                     setTimeout(() => {
                         cipherScreen.classList.remove('active');
-                        alert("Backend connected: Check python terminal!");
+                        
+                        document.getElementById('input-grid').style.display = 'none';
+                        document.getElementById('playbook-result').style.display = 'block';
+                        document.getElementById('main-scroll').scrollTo({ top: 0, behavior: 'smooth' });
+
+                        // Initialize the Proof Chart after the div is visible
+                        if(proofChartInstance) proofChartInstance.destroy();
+                        const pCtx = document.getElementById('proofChart').getContext('2d');
+                        proofChartInstance = new Chart(pCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Generic Ads', 'Click Through', 'Bounce Rate', 'Cart Abandon', 'Purchase'],
+                                datasets: [{
+                                    label: 'Customer Drop-off',
+                                    data: [100, 45, 20, 10, 2],
+                                    backgroundColor: '#FF9A9E',
+                                    borderRadius: 4
+                                }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                        });
+
                     }, 500);
                 }
             };
             runPhases();
         });
 
-        // CHART.JS
+        // 1ST CHART.JS (Input screen)
         const ctx = document.getElementById('marketChart').getContext('2d');
         const marketChart = new Chart(ctx, {
             type: 'line',
