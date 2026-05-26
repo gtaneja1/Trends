@@ -318,35 +318,33 @@
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
 
         // ==========================================
-        // CINEMATIC DROP TYPEWRITER
+        // SEAMLESS GLITCH TYPEWRITER
         // ==========================================
         const cinematicTypewriter = (element, callback) => {
-            const part1 = "ChudGPT may give answers,";
-            const part2 = "BUT WE HELP BUILD EMPIRES.";
+            const fullText = "ChudGPT may give answers,\nbut we help build empires.";
             let currentText = "";
             let i = 0;
             
             const typeLoop = setInterval(() => {
-                if (i < part1.length) {
-                    currentText += part1[i]; 
-                    element.innerText = currentText + chars[Math.floor(Math.random() * chars.length)];
+                if (i < fullText.length) {
+                    if (fullText[i] === '\n') {
+                        currentText += '<br><br>';
+                    } else {
+                        currentText += fullText[i];
+                    }
+                    let glitchChar = chars[Math.floor(Math.random() * chars.length)];
+                    element.innerHTML = currentText + `<span style="opacity:0.5">${glitchChar}</span>`;
                     i++;
                 } else {
                     clearInterval(typeLoop);
-                    element.innerText = currentText; 
+                    element.innerHTML = currentText; 
                     
+                    // Wait to let users read the final phrase and the flashing reviews
                     setTimeout(() => {
-                        const splashScreen = document.getElementById('splash-screen');
-                        splashScreen.classList.add('flashbang');
-                        element.classList.add('shake-hard');
-                        
-                        element.innerHTML = `${part1} <br><br> <span style="font-size: 3.5vw; text-shadow: 0 0 20px #ffffff;">${part2}</span>`;
-                        
-                        if(callback) setTimeout(callback, 2000); 
-
-                    }, 1500);
+                        if(callback) callback();
+                    }, 2500); 
                 }
-            }, 80); 
+            }, 60); 
         };
 
         window.addEventListener('load', () => {
@@ -421,16 +419,38 @@
             });
         });
 
+        // SMART PULSE METER LOGIC
         const problemInput = document.getElementById('core_problem');
         const pulseLine = document.getElementById('ai-pulse');
         const pulseStatus = document.getElementById('pulse-status');
 
         problemInput.addEventListener('input', (e) => {
-            const length = e.target.value.length;
-            if (length === 0) { pulseLine.style.width = '0%'; pulseStatus.innerText = 'Awaiting context'; pulseLine.style.background = '#EF4444'; } 
-            else if (length < 20) { pulseLine.style.width = '30%'; pulseLine.style.background = '#EF4444'; pulseStatus.innerText = 'Need more detail'; } 
-            else if (length < 50) { pulseLine.style.width = '60%'; pulseLine.style.background = '#F59E0B'; pulseStatus.innerText = 'Analyzing parameters'; } 
-            else { pulseLine.style.width = '100%'; pulseLine.style.background = '#10B981'; pulseStatus.innerText = 'Optimal context reached'; }
+            const val = e.target.value.trim();
+            const length = val.length;
+            const words = val.split(/\s+/).filter(w => w.length > 0).length;
+            const uniqueChars = new Set(val.replace(/\s/g, '').split('')).size;
+
+            if (length === 0) {
+                pulseLine.style.width = '0%';
+                pulseStatus.innerText = 'Awaiting context';
+                pulseLine.style.background = '#EF4444';
+            } else if (length > 10 && uniqueChars < 4) { // Catches spamming "xxxxxxxx"
+                pulseLine.style.width = '10%';
+                pulseLine.style.background = '#EF4444';
+                pulseStatus.innerText = 'Invalid context pattern';
+            } else if (words < 4) {
+                pulseLine.style.width = '30%';
+                pulseLine.style.background = '#EF4444';
+                pulseStatus.innerText = 'Need more detail';
+            } else if (words < 10) {
+                pulseLine.style.width = '60%';
+                pulseLine.style.background = '#F59E0B';
+                pulseStatus.innerText = 'Analyzing parameters';
+            } else {
+                pulseLine.style.width = '100%';
+                pulseLine.style.background = '#10B981';
+                pulseStatus.innerText = 'Optimal context reached';
+            }
         });
 
         // ==========================================
@@ -442,7 +462,6 @@
                     const content = btn.nextElementSibling;
                     const isOpen = content.classList.contains('open');
                     
-                    // Close others
                     document.querySelectorAll('.deep-dive-content').forEach(c => {
                         c.classList.remove('open');
                         c.previousElementSibling.innerText = '+ View Execution Assets';
@@ -455,7 +474,7 @@
                 });
             });
         };
-        attachDeepDiveListeners(); // Attach initially
+        attachDeepDiveListeners(); 
 
         // ==========================================
         // ANIMATE CONFIDENCE RINGS
@@ -469,7 +488,6 @@
                     if (current >= target) { clearInterval(interval); return; }
                     current += 2;
                     if(current > target) current = target;
-                    // Fills the conic gradient dynamically to look like a progress circle
                     ring.style.background = `conic-gradient(var(--brand-primary) ${current}%, var(--bg-main) 0%)`;
                     valSpan.innerText = current + '%';
                 }, 30);
@@ -516,10 +534,8 @@
                         document.getElementById('playbook-result').style.display = 'block';
                         document.getElementById('main-scroll').scrollTo({ top: 0, behavior: 'smooth' });
 
-                        // Trigger the Confidence Ring Animations
                         setTimeout(animateRings, 500);
 
-                        // Initialize the INTERACTIVE Proof Chart 
                         if(proofChartInstance) proofChartInstance.destroy();
                         const pCtx = document.getElementById('proofChart').getContext('2d');
                         proofChartInstance = new Chart(pCtx, {
@@ -573,7 +589,7 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#9CA3AF' } }, y: { display: false } } }
         });
 
-        // COLOR GLITCH ON SCROLL (Now applied to Playbook headers too!)
+        // COLOR GLITCH ON SCROLL
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !entry.target.classList.contains('decoded')) {
@@ -583,7 +599,6 @@
             });
         }, { threshold: 0.5 });
         
-        // Mutator checks for dynamically revealed elements
         const domObserver = new MutationObserver(() => {
             document.querySelectorAll('.color-glitch-text:not(.observed)').forEach(header => {
                 header.classList.add('observed');
