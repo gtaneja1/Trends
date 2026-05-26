@@ -96,7 +96,20 @@
 
                     <div id="playbook-result">
                         
-                        <h2 class="briefing-header color-glitch-text" data-target="Strategic Briefing">Strategic Briefing</h2>
+                        <div class="briefing-top-row">
+                            <h2 class="briefing-header color-glitch-text" data-target="Strategic Briefing" style="border-bottom: none; padding-bottom: 0;">Strategic Briefing</h2>
+                            <button class="export-btn" onclick="window.print()">↓ Export Dossier</button>
+                        </div>
+                        
+                        <div class="telemetry-bar">
+                            <div class="telemetry-item">
+                                <div class="telemetry-pulse"></div>
+                                <span>Status: Live Neural Sync</span>
+                            </div>
+                            <div class="telemetry-item"><span>[ NODES PARSED: 14,204 ]</span></div>
+                            <div class="telemetry-item"><span>[ DATA SOURCES: Meta Ads API, Market Trends ]</span></div>
+                            <div class="telemetry-item"><span>[ ERROR MARGIN: < 2.4% ]</span></div>
+                        </div>
                         
                         <div class="briefing-section">
                             <h3 class="section-label color-glitch-text" data-target="01 // Executive Summary"><span>01 //</span> Executive Summary</h3>
@@ -128,6 +141,19 @@
                                         <li>Source local manufacturing to ensure ethical claims hold up to enthusiast scrutiny.</li>
                                         <li>Release in a limited batch of 500 units to manufacture scarcity and exclusivity.</li>
                                     </ul>
+                                    
+                                    <div class="confidence-wrapper">
+                                        <div class="confidence-ring" data-target="94"><span class="confidence-value">0%</span></div>
+                                        <span class="confidence-label">AI Execution Confidence</span>
+                                    </div>
+                                    
+                                    <button class="deep-dive-btn">+ View Execution Assets</button>
+                                    <div class="deep-dive-content">
+                                        <span class="asset-tag">[ AI GENERATED MIDJOURNEY PROMPT ]</span><br>
+                                        "A minimalist, high-end flat lay of a thick 14oz organic cotton t-shirt, emphasizing heavy stitching and tactile fabric texture, dramatic lighting, shot on 35mm film --ar 16:9 --v 6.0"<br><br>
+                                        <span class="asset-tag">[ OPTIMAL PRODUCT COPY ]</span><br>
+                                        "Not just sustainable. Indestructible. 14oz pure organic cotton built to outlast your wardrobe."
+                                    </div>
                                 </div>
                             </div>
                             
@@ -141,6 +167,17 @@
                                         <li>Use raw math: "A $20 shirt lasts 10 washes. Our $60 shirt lasts 100."</li>
                                         <li>Link directly to the manufacturing process page to build structural trust.</li>
                                     </ul>
+
+                                    <div class="confidence-wrapper">
+                                        <div class="confidence-ring" data-target="88"><span class="confidence-value">0%</span></div>
+                                        <span class="confidence-label">AI Execution Confidence</span>
+                                    </div>
+
+                                    <button class="deep-dive-btn">+ View Execution Assets</button>
+                                    <div class="deep-dive-content">
+                                        <span class="asset-tag">[ AD HOOK SCRIPT (TIKTOK/REELS) ]</span><br>
+                                        "(Hold up cheap shirt) This costs $20 and lasts exactly 3 months. (Hold up your shirt) This costs $60 and is structurally guaranteed for a decade. Stop buying garbage. Do the math."
+                                    </div>
                                 </div>
                             </div>
 
@@ -148,17 +185,28 @@
                                 <div class="step-num">03</div>
                                 <div class="step-content">
                                     <h4>Micro-Influencer Seeding Campaign</h4>
-                                    <p>Send free samples to top community accounts. Leverage the organic interest to generate high-resolution user-created content (UCC) emphasizing tactile details, heavy stitching, and structural fit.</p>
+                                    <p>Send free samples to top community accounts. Leverage the organic interest to generate high-resolution user-created content (UCC) emphasizing tactile details.</p>
                                     <ul class="step-list">
                                         <li>Identify 15 accounts with 5k-20k highly engaged, niche followers.</li>
                                         <li>Do not ask for "shoutouts"; ask for "honest fabric reviews" to maintain authenticity.</li>
                                         <li>Repurpose the best user videos as top-of-funnel Meta advertisements.</li>
                                     </ul>
+
+                                    <div class="confidence-wrapper">
+                                        <div class="confidence-ring" data-target="91"><span class="confidence-value">0%</span></div>
+                                        <span class="confidence-label">AI Execution Confidence</span>
+                                    </div>
+
+                                    <button class="deep-dive-btn">+ View Execution Assets</button>
+                                    <div class="deep-dive-content">
+                                        <span class="asset-tag">[ OUTREACH DM TEMPLATE ]</span><br>
+                                        "Hey [Name], we’ve been watching your aesthetic content for a while. We just engineered a heavyweight 14oz tee that we think fits your style perfectly. We don't want a sponsored post—we just want to send you one to test the fabric. Let us know where to ship it."
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <button class="funky-btn" style="width: auto; padding: 16px 40px;" onclick="location.reload()">← Run New Analysis</button>
+                        <button class="funky-btn" style="width: auto; padding: 16px 40px; margin-top: 40px;" onclick="location.reload()">← Run New Analysis</button>
 
                     </div>
 
@@ -316,7 +364,6 @@
         const glitchColors = ['#FF00C1', '#00FFF9', '#EAB308', '#10B981', '#8B5CF6'];
         const scrambleAndColor = (element, targetText, speed = 15, finalColor = 'var(--text-main)', callback) => {
             let iterations = 0;
-            // Clear any inner HTML (like the highlight spans) before scrambling
             element.innerHTML = ""; 
             
             const interval = setInterval(() => {
@@ -335,14 +382,12 @@
                     element.style.color = finalColor;
                     element.style.textShadow = 'none';
                     
-                    // If it's a section label, we need to rebuild the HTML structure for the span
                     if(element.classList.contains('section-label')) {
                         const parts = targetText.split('//');
                         if(parts.length > 1) {
                             element.innerHTML = `<span>${parts[0]} //</span> ${parts[1]}`;
                         }
                     }
-                    
                     if(callback) callback();
                 }
                 iterations += 1/3;
@@ -389,6 +434,49 @@
         });
 
         // ==========================================
+        // DEEP DIVE ACCORDION LOGIC
+        // ==========================================
+        const attachDeepDiveListeners = () => {
+            document.querySelectorAll('.deep-dive-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const content = btn.nextElementSibling;
+                    const isOpen = content.classList.contains('open');
+                    
+                    // Close others
+                    document.querySelectorAll('.deep-dive-content').forEach(c => {
+                        c.classList.remove('open');
+                        c.previousElementSibling.innerText = '+ View Execution Assets';
+                    });
+
+                    if (!isOpen) {
+                        content.classList.add('open');
+                        btn.innerText = '− Hide Execution Assets';
+                    }
+                });
+            });
+        };
+        attachDeepDiveListeners(); // Attach initially
+
+        // ==========================================
+        // ANIMATE CONFIDENCE RINGS
+        // ==========================================
+        const animateRings = () => {
+            document.querySelectorAll('.confidence-ring').forEach(ring => {
+                const target = parseInt(ring.getAttribute('data-target'));
+                let current = 0;
+                const valSpan = ring.querySelector('.confidence-value');
+                const interval = setInterval(() => {
+                    if (current >= target) { clearInterval(interval); return; }
+                    current += 2;
+                    if(current > target) current = target;
+                    // Fills the conic gradient dynamically to look like a progress circle
+                    ring.style.background = `conic-gradient(var(--brand-primary) ${current}%, var(--bg-main) 0%)`;
+                    valSpan.innerText = current + '%';
+                }, 30);
+            });
+        };
+
+        // ==========================================
         // FROSTED CIPHER LOADER & RESULT REVEAL
         // ==========================================
         const initBtn = document.getElementById('init-btn');
@@ -428,6 +516,9 @@
                         document.getElementById('playbook-result').style.display = 'block';
                         document.getElementById('main-scroll').scrollTo({ top: 0, behavior: 'smooth' });
 
+                        // Trigger the Confidence Ring Animations
+                        setTimeout(animateRings, 500);
+
                         // Initialize the INTERACTIVE Proof Chart 
                         if(proofChartInstance) proofChartInstance.destroy();
                         const pCtx = document.getElementById('proofChart').getContext('2d');
@@ -438,9 +529,9 @@
                                 datasets: [{
                                     label: 'Customer Volume',
                                     data: [100, 45, 20],
-                                    backgroundColor: ['#111827', '#6B7280', '#FF9A9E'], // Differentiates the bounce rate
+                                    backgroundColor: ['#111827', '#6B7280', '#FF9A9E'], 
                                     borderRadius: 8,
-                                    hoverBackgroundColor: '#FF00C1' // Glitch pink on hover
+                                    hoverBackgroundColor: '#FF00C1' 
                                 }]
                             },
                             options: { 
@@ -455,23 +546,12 @@
                                         padding: 16,
                                         cornerRadius: 12,
                                         displayColors: false,
-                                        callbacks: {
-                                            label: function(context) {
-                                                return context.parsed.y + '% Retained';
-                                            }
-                                        }
+                                        callbacks: { label: function(context) { return context.parsed.y + '% Retained'; } }
                                     }
                                 },
                                 scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: { color: '#E5E7EB', borderDash: [5, 5] },
-                                        ticks: { color: '#6B7280', font: { family: 'Courier New' } }
-                                    },
-                                    x: {
-                                        grid: { display: false },
-                                        ticks: { color: '#111827', font: { family: 'Plus Jakarta Sans', weight: 'bold' } }
-                                    }
+                                    y: { beginAtZero: true, grid: { color: '#E5E7EB', borderDash: [5, 5] }, ticks: { color: '#6B7280', font: { family: 'Courier New' } } },
+                                    x: { grid: { display: false }, ticks: { color: '#111827', font: { family: 'Plus Jakarta Sans', weight: 'bold' } } }
                                 }
                             }
                         });
@@ -503,7 +583,7 @@
             });
         }, { threshold: 0.5 });
         
-        // Use a MutationObserver to catch dynamically revealed playbook headers
+        // Mutator checks for dynamically revealed elements
         const domObserver = new MutationObserver(() => {
             document.querySelectorAll('.color-glitch-text:not(.observed)').forEach(header => {
                 header.classList.add('observed');
