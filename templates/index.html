@@ -95,30 +95,39 @@
                     </div>
 
                     <div id="playbook-result">
-                        <h2 class="briefing-header">Strategic Briefing</h2>
+                        
+                        <h2 class="briefing-header color-glitch-text" data-target="Strategic Briefing">Strategic Briefing</h2>
                         
                         <div class="briefing-section">
-                            <h3 class="section-label">01 // Executive Summary</h3>
+                            <h3 class="section-label color-glitch-text" data-target="01 // Executive Summary"><span>01 //</span> Executive Summary</h3>
                             <p class="executive-summary-text">
-                                The market for sustainable fashion is experiencing high saturation with low-effort eco-branding. Your core problem of low engagement stems from consumer fatigue regarding generic sustainability claims. The data indicates a heavy shift towards authentic, high-quality manufacturing. To break through the noise, you must pivot positioning away from "eco-friendly" and toward "generational durability."
+                                The market for sustainable fashion is experiencing <span class="highlight">high saturation with low-effort eco-branding</span>. Your core problem of low engagement stems from <span class="highlight">consumer fatigue</span> regarding generic sustainability claims. The data indicates a heavy shift towards authentic, high-quality manufacturing. To break through the noise, you must pivot positioning away from "eco-friendly" and toward <span class="highlight">"generational durability"</span>.
                             </p>
                         </div>
 
                         <div class="briefing-section">
-                            <h3 class="section-label">02 // Empirical Proof</h3>
+                            <h3 class="section-label color-glitch-text" data-target="02 // Empirical Proof"><span>02 //</span> Empirical Proof</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">
+                                Market drop-off analysis indicates that while initial ad impressions are high, failure to communicate true value immediately results in a severe <span class="highlight">80% customer bounce</span> before the final checkout stage.
+                            </p>
                             <div class="proof-container">
                                 <canvas id="proofChart"></canvas>
                             </div>
                         </div>
 
                         <div class="briefing-section">
-                            <h3 class="section-label">03 // Tactical Blueprint</h3>
+                            <h3 class="section-label color-glitch-text" data-target="03 // Tactical Blueprint"><span>03 //</span> Tactical Blueprint</h3>
                             
                             <div class="linear-step">
                                 <div class="step-num">01</div>
                                 <div class="step-content">
                                     <h4>Launch a Premium 'Heavyweight' Limited Line</h4>
-                                    <p>Directly counter cheaper competitors by introducing a limited run focusing on premium materials. Leverage the high social forum interest for #fashiondesign to position this as an enthusiast product rather than just a sustainable one.</p>
+                                    <p>Directly counter cheaper competitors by introducing a limited run focusing on premium materials. Leverage the high social forum interest for #fashiondesign to position this as an enthusiast product.</p>
+                                    <ul class="step-list">
+                                        <li>Identify 2-3 core fabrics with high organic search volume (e.g., 14oz organic cotton).</li>
+                                        <li>Source local manufacturing to ensure ethical claims hold up to enthusiast scrutiny.</li>
+                                        <li>Release in a limited batch of 500 units to manufacture scarcity and exclusivity.</li>
+                                    </ul>
                                 </div>
                             </div>
                             
@@ -126,7 +135,12 @@
                                 <div class="step-num">02</div>
                                 <div class="step-content">
                                     <h4>Transparent Cost-Per-Wear Breakdown</h4>
-                                    <p>Create a simple infographic comparing your product's lifespan against cheaper competitors. Demonstrate that paying 1.5x more upfront saves 3x money over the year, targeting the specific consumer fatigue regarding low quality.</p>
+                                    <p>Create a simple infographic comparing your product's lifespan against cheaper competitors. Demonstrate that paying 1.5x more upfront saves 3x money over the year.</p>
+                                    <ul class="step-list">
+                                        <li>Target Instagram Carousel and TikTok formats for this specific infographic.</li>
+                                        <li>Use raw math: "A $20 shirt lasts 10 washes. Our $60 shirt lasts 100."</li>
+                                        <li>Link directly to the manufacturing process page to build structural trust.</li>
+                                    </ul>
                                 </div>
                             </div>
 
@@ -135,6 +149,11 @@
                                 <div class="step-content">
                                     <h4>Micro-Influencer Seeding Campaign</h4>
                                     <p>Send free samples to top community accounts. Leverage the organic interest to generate high-resolution user-created content (UCC) emphasizing tactile details, heavy stitching, and structural fit.</p>
+                                    <ul class="step-list">
+                                        <li>Identify 15 accounts with 5k-20k highly engaged, niche followers.</li>
+                                        <li>Do not ask for "shoutouts"; ask for "honest fabric reviews" to maintain authenticity.</li>
+                                        <li>Repurpose the best user videos as top-of-funnel Meta advertisements.</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -297,6 +316,9 @@
         const glitchColors = ['#FF00C1', '#00FFF9', '#EAB308', '#10B981', '#8B5CF6'];
         const scrambleAndColor = (element, targetText, speed = 15, finalColor = 'var(--text-main)', callback) => {
             let iterations = 0;
+            // Clear any inner HTML (like the highlight spans) before scrambling
+            element.innerHTML = ""; 
+            
             const interval = setInterval(() => {
                 const randomColor = glitchColors[Math.floor(Math.random() * glitchColors.length)];
                 element.style.color = randomColor;
@@ -312,6 +334,15 @@
                     clearInterval(interval);
                     element.style.color = finalColor;
                     element.style.textShadow = 'none';
+                    
+                    // If it's a section label, we need to rebuild the HTML structure for the span
+                    if(element.classList.contains('section-label')) {
+                        const parts = targetText.split('//');
+                        if(parts.length > 1) {
+                            element.innerHTML = `<span>${parts[0]} //</span> ${parts[1]}`;
+                        }
+                    }
+                    
                     if(callback) callback();
                 }
                 iterations += 1/3;
@@ -364,7 +395,7 @@
         const cipherScreen = document.getElementById('cipher-screen');
         const cipherOutput = document.getElementById('cipher-output');
         const form = document.getElementById('strategy-form');
-        let proofChartInstance = null; // Hold chart reference
+        let proofChartInstance = null; 
         
         initBtn.addEventListener('click', () => {
             if(!form.checkValidity()) { form.reportValidity(); return; }
@@ -397,21 +428,52 @@
                         document.getElementById('playbook-result').style.display = 'block';
                         document.getElementById('main-scroll').scrollTo({ top: 0, behavior: 'smooth' });
 
-                        // Initialize the Proof Chart after the div is visible
+                        // Initialize the INTERACTIVE Proof Chart 
                         if(proofChartInstance) proofChartInstance.destroy();
                         const pCtx = document.getElementById('proofChart').getContext('2d');
                         proofChartInstance = new Chart(pCtx, {
                             type: 'bar',
                             data: {
-                                labels: ['Generic Ads', 'Click Through', 'Bounce Rate', 'Cart Abandon', 'Purchase'],
+                                labels: ['Generic Ads', 'Click Through', 'Bounce Rate'],
                                 datasets: [{
-                                    label: 'Customer Drop-off',
-                                    data: [100, 45, 20, 10, 2],
-                                    backgroundColor: '#FF9A9E',
-                                    borderRadius: 4
+                                    label: 'Customer Volume',
+                                    data: [100, 45, 20],
+                                    backgroundColor: ['#111827', '#6B7280', '#FF9A9E'], // Differentiates the bounce rate
+                                    borderRadius: 8,
+                                    hoverBackgroundColor: '#FF00C1' // Glitch pink on hover
                                 }]
                             },
-                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                            options: { 
+                                responsive: true, 
+                                maintainAspectRatio: false, 
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: '#111827',
+                                        titleFont: { family: 'Courier New', size: 14 },
+                                        bodyFont: { family: 'Plus Jakarta Sans', size: 16, weight: 'bold' },
+                                        padding: 16,
+                                        cornerRadius: 12,
+                                        displayColors: false,
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.parsed.y + '% Retained';
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: '#E5E7EB', borderDash: [5, 5] },
+                                        ticks: { color: '#6B7280', font: { family: 'Courier New' } }
+                                    },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { color: '#111827', font: { family: 'Plus Jakarta Sans', weight: 'bold' } }
+                                    }
+                                }
+                            }
                         });
 
                     }, 500);
@@ -431,7 +493,7 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#9CA3AF' } }, y: { display: false } } }
         });
 
-        // COLOR GLITCH ON SCROLL
+        // COLOR GLITCH ON SCROLL (Now applied to Playbook headers too!)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !entry.target.classList.contains('decoded')) {
@@ -440,7 +502,15 @@
                 }
             });
         }, { threshold: 0.5 });
-        document.querySelectorAll('.color-glitch-text').forEach(header => observer.observe(header));
+        
+        // Use a MutationObserver to catch dynamically revealed playbook headers
+        const domObserver = new MutationObserver(() => {
+            document.querySelectorAll('.color-glitch-text:not(.observed)').forEach(header => {
+                header.classList.add('observed');
+                observer.observe(header);
+            });
+        });
+        domObserver.observe(document.body, { childList: true, subtree: true });
 
         // FAQ ACCORDION LOGIC
         document.querySelectorAll('.faq-item').forEach(item => {
@@ -455,6 +525,5 @@
             });
         });
     </script>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

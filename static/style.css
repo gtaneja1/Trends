@@ -160,6 +160,7 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 .nav-categories a.active { background: var(--text-main); color: #fff; }
 .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
 .tab-content.active-tab { display: block; }
+
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .grid-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-bottom: 40px; transition: opacity 0.5s ease; }
 
@@ -176,28 +177,41 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
    THE EXECUTIVE BRIEFING (LINEAR PLAYBOOK)
 ========================================= */
 #playbook-result { display: none; animation: fadeIn 0.8s ease forwards; max-width: 900px; margin: 0 auto; }
-.briefing-header { font-size: 48px; margin-bottom: 16px; border-bottom: 2px solid var(--text-main); padding-bottom: 24px; }
+
+/* Glitch applied dynamically via JS, this is base style */
+.briefing-header { font-size: 48px; margin-bottom: 16px; border-bottom: 2px solid var(--border-light); padding-bottom: 24px; transition: color 0.1s ease, text-shadow 0.1s ease; }
 
 .briefing-section { margin-bottom: 60px; }
+
+/* Colorful Section Labels */
 .section-label { 
     font-family: 'Courier New', Courier, monospace; 
     font-size: 14px; 
-    color: var(--brand-primary); 
+    color: var(--text-main); 
     text-transform: uppercase; 
     letter-spacing: 2px; 
     margin-bottom: 24px; 
     display: flex;
     align-items: center;
     gap: 12px;
+    transition: color 0.1s ease, text-shadow 0.1s ease;
 }
+/* This makes the "01 //" part brand colored */
+.section-label span { color: var(--brand-primary); font-weight: 800; }
 .section-label::after { content: ''; flex-grow: 1; height: 1px; background: var(--border-light); }
 
-/* Phase 1: Summary */
+/* Phase 1: Summary with Highlights */
 .executive-summary-text { 
-    font-family: 'Playfair Display', serif; 
-    font-size: 24px; 
-    line-height: 1.6; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    font-size: 20px; 
+    line-height: 1.8; 
     color: var(--text-main); 
+}
+.highlight {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
 }
 
 /* Phase 2: Proof Chart */
@@ -226,8 +240,26 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
     color: var(--border-light); 
     line-height: 1; 
 }
-.step-content h4 { font-size: 24px; margin-bottom: 12px; }
-.step-content p { color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+.step-content h4 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 12px; }
+.step-content p { color: var(--text-muted); font-size: 16px; line-height: 1.6; margin-bottom: 16px; }
+
+/* The Elaborated Tactical Blueprint Lists */
+.step-list { list-style: none; padding-left: 0; }
+.step-list li { 
+    color: var(--text-muted); 
+    font-size: 15px; 
+    line-height: 1.5; 
+    margin-bottom: 8px; 
+    position: relative; 
+    padding-left: 20px; 
+}
+.step-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--brand-primary);
+    font-weight: 800;
+}
 
 /* =========================================
    SCROLLABLE SECTIONS & PHOTOS
