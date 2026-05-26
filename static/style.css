@@ -50,22 +50,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main)
     background-size: 100% 4px; z-index: 2; pointer-events: none; opacity: 0.6;
 }
 
-.flashbang { animation: flashbangAnim 0.6s ease-out forwards; }
-@keyframes flashbangAnim {
-    0% { background: #FFFFFF; filter: invert(1); }
-    10% { background: #FFFFFF; filter: invert(1); }
-    100% { background: #020202; filter: invert(0); }
-}
-
-.shake-hard { animation: shakeAnim 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-@keyframes shakeAnim {
-    10%, 90% { transform: translate3d(-3px, 3px, 0) scale(1.02); }
-    20%, 80% { transform: translate3d(5px, -5px, 0) scale(1.02); }
-    30%, 50%, 70% { transform: translate3d(-10px, 8px, 0) scale(1.02); }
-    40%, 60% { transform: translate3d(10px, -8px, 0) scale(1.02); }
-    100% { transform: translate3d(0, 0, 0) scale(1); }
-}
-
 #splash-screen.hidden { animation: crtOff 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
 @keyframes crtOff {
     0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
@@ -177,11 +161,9 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 ========================================= */
 #playbook-result { display: none; animation: fadeIn 0.8s ease forwards; max-width: 900px; margin: 0 auto; }
 
-/* Flex container for the top row (Title + Export Button) */
 .briefing-top-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; border-bottom: 2px solid var(--border-light); padding-bottom: 24px; }
 .briefing-header { font-size: 48px; margin: 0; line-height: 1; transition: color 0.1s ease, text-shadow 0.1s ease; }
 
-/* 1. Export Button */
 .export-btn {
     background: transparent; border: 1px solid var(--text-main); color: var(--text-main);
     font-family: 'Courier New', Courier, monospace; font-size: 13px; font-weight: 700;
@@ -190,7 +172,6 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 }
 .export-btn:hover { background: var(--text-main); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
-/* 2. Telemetry Bar */
 .telemetry-bar {
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
     padding: 12px 0; border-bottom: 1px solid var(--border-light);
@@ -225,18 +206,16 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 .step-list li { color: var(--text-muted); font-size: 15px; line-height: 1.5; margin-bottom: 8px; position: relative; padding-left: 20px; }
 .step-list li::before { content: '→'; position: absolute; left: 0; color: var(--brand-primary); font-weight: 800; }
 
-/* 3. The Confidence Rings */
 .confidence-wrapper { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
 .confidence-ring {
     width: 48px; height: 48px; border-radius: 50%;
-    background: conic-gradient(var(--brand-primary) 0%, var(--bg-main) 0%); /* Populated by JS */
+    background: conic-gradient(var(--brand-primary) 0%, var(--bg-main) 0%); 
     display: flex; align-items: center; justify-content: center; position: relative;
 }
 .confidence-ring::before { content: ""; position: absolute; inset: 4px; background: var(--bg-panel); border-radius: 50%; }
 .confidence-value { position: relative; z-index: 1; font-family: 'Courier New', Courier, monospace; font-size: 12px; font-weight: 800; color: var(--text-main); }
 .confidence-label { font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-/* 4. Execution Deep Dive Accordions */
 .deep-dive-btn {
     background: none; border: none; color: var(--brand-primary);
     font-family: 'Courier New', Courier, monospace; font-size: 13px; font-weight: 800;
