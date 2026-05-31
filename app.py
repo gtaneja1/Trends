@@ -25,7 +25,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configure Gemini using the new SDK
-gemini_client = genai.Client(api_key=os.getenv("AIzaSyCY3Vr0GC_uyU1CmR5b0C5wtw7skO1ql2M"))
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 general_categories = ['politics', 'gaming', 'movies', 'sports', 'food', 'music', 'technology', 'books', 'science', 'art']
 
