@@ -1,137 +1,224 @@
-# ========================================================================
-#   SALES + MARKETING FORECAST - BACKEND SERVER (app.py)
-# ========================================================================
-
 import os
-import sys
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+from google import genai
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
+from dotenv import load_dotenv
 
-# Add the AI backend directory to sys.path so we can import modules
-sys.path.append(os.path.join(os.path.dirname(__file__), 'AI_BACKEND_TRAINING'))
+# Load environment variables
+load_dotenv()
 
-# Import custom AI scraper and synthesizer modules
-try:
-    import social_scraper
-    import market_scraper
-    import sentiment_analyst
-    import strategy_synthesizer
-except ImportError as e:
-    print(f" [WARNING] Could not import backend training modules: {e}")
+# Suppress background hardware initialization logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
-# Initialize the Flask application
+# Import your custom backend data-scraping and sentiment modules
+from AI_BACKEND_TRAINING.social_scraper import get_live_reddit_trends
+from AI_BACKEND_TRAINING.market_scraper import get_stock_data, get_live_news
+from AI_BACKEND_TRAINING.sentiment_analyst import analyze_financial_data, analyze_social_media_data
+
+print(" Booting Dual-Model Cascade Strategy Engine...")
+
 app = Flask(__name__)
+CORS(app)
 
-# Helper to dynamically map niche key phrases to subreddits and tickers
-def resolve_niche_parameters(business_field):
-    field_lower = business_field.lower()
-    
-    # Fashion/Apparel Niche
-    if any(word in field_lower for word in ["fashion", "apparel", "clothing", "streetwear", "shoe", "brand", "design"]):
-        return "streetwear", "NKE", "fashion design"
-    # Crypto Niche
-    elif any(word in field_lower for word in ["crypto", "bitcoin", "ethereum", "coin", "blockchain"]):
-        return "CryptoCurrency", "COIN", "crypto tokens"
-    # Tech/AI Niche
-    elif any(word in field_lower for word in ["tech", "software", "saas", "ai", "hardware", "app"]):
-        return "technology", "MSFT", "artificial intelligence"
-    # Finance/Stocks Niche
-    elif any(word in field_lower for word in ["finance", "stock", "investing", "trading", "money"]):
-        return "WallStreetBets", "SPY", "stock investing"
-    # Default General Niche
-    else:
-        return "business", "AAPL", business_field
+# Configure Gemini using the new SDK
+gemini_client = genai.Client(api_key=os.getenv("AIzaSyCY3Vr0GC_uyU1CmR5b0C5wtw7skO1ql2M"))
 
-# Route 1: The Home Page (GET request)
-@app.route('/')
+general_categories = ['politics', 'gaming', 'movies', 'sports', 'food', 'music', 'technology', 'books', 'science', 'art']
+
+# =====================================================================
+#   DYNAMIC PATH RESOLUTION MECHANISM (Fixes FileNotFoundError)
+# =====================================================================
+# Find the exact folder where this app.py file lives
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Build bulletproof absolute paths to your subfolder assets
+csv_path = os.path.join(BASE_DIR, "AI_BACKEND_TRAINING", "marketing_strategy_dataset.csv")
+topic_model_path = os.path.join(BASE_DIR, "AI_BACKEND_TRAINING", "saved_general_topic_model.keras")
+strategy_model_path = os.path.join(BASE_DIR, "AI_BACKEND_TRAINING", "saved_routing_model.keras")
+
+# =====================================================================
+#   LOAD DATA AND NEURAL NETWORKS WITH SYSTEM PATHS
+# =====================================================================
+print(f" Loading dataset from: {csv_path}...")
+try:
+    df_marketing = pd.read_csv(csv_path)
+    marketing_categories = df_marketing["category_label"].unique().tolist()
+except FileNotFoundError:
+    print(f" Critical Error: Could not find CSV file at {csv_path}")
+    exit(1)
+
+print(" Loading Neural Networks into server memory...")
+try:
+    model_topic = tf.keras.models.load_model(topic_model_path)
+    model_strategy = tf.keras.models.load_model(strategy_model_path)
+    print("Cascade classification layers loaded successfully and warm!")
+except Exception as e:
+    print(f" Error loading models from their path dependencies: {e}")
+    exit(1)
+
+# =====================================================================
+#   ROUTES
+# =====================================================================
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
-# Route 2: The Live AI Strategy API (POST request)
-@app.route('/api/analyze', methods=['POST'])
-def analyze():
-    data = request.json or {}
-    
-    # Extract fields sent from the frontend form
-    business_field = data.get('niche', 'Sustainable Apparel').strip()
-    core_problem = data.get('problem', 'Increasing customer acquisition costs.').strip()
-    target_audience = data.get('audience', 'Gen Z females').strip()
-    
-    print(f"\n[API Analyze Initiated] Field: '{business_field}' | Problem: '{core_problem}' | Audience: '{target_audience}'")
-    
-    # 1. Resolve subreddits and ticker symbols
-    subreddit, ticker, search_topic = resolve_niche_parameters(business_field)
-    
-    # 2. Run Scraping Engines (Social & Market)
+@app.route("/api/analyze", methods=["POST"])
+def analyze_pipeline():
     try:
-        social_data = social_scraper.get_live_reddit_trends(subreddit, search_topic)
-    except Exception as e:
-        print(f" -> Social scraper failed: {e}")
-        social_data = {"keywords": [], "hashtags": []}
+        # 1. Parse request parameters
+        data = request.get_json() or {}
         
-    try:
-        market_data = market_scraper.get_stock_data(ticker)
-        news_data = market_scraper.get_live_news(search_topic)
-    except Exception as e:
-        print(f" -> Market scraper failed: {e}")
-        market_data = {"symbol": ticker, "current_price": 100.0, "change": 0.0, "percent_change": 0.0}
-        news_data = []
+        niche = data.get("niche", "streetwear apparel").strip()
+        keyword = data.get("keyword", "corduroy").strip()
+        subreddit = data.get("subreddit", "streetwear").strip()
+        ticker = data.get("ticker", "NKE").strip()
+        problem = data.get("problem", "Competitors selling cheap alternatives.").strip()
+        
+        if not niche or not keyword or not subreddit or not ticker:
+            return jsonify({"status": "error", "message": "Missing required search parameters."}), 400
+            
+        print(f"\n[ORCHESTRATOR] Initializing Growth Analysis Pipeline...")
+        print(f" -> Niche: '{niche}' | Target: '{keyword}' | Subreddit: r/{subreddit} | Ticker: '{ticker}'")
+        
+        print("\n[ORCHESTRATOR] Step 1 of 5: Scraping Social trends...")
+        social_data = get_live_reddit_trends(subreddit, keyword)
+        
+        print("\n[ORCHESTRATOR] Step 2 of 5: Fetching Market and Competitor News...")
+        stock_data = get_stock_data(ticker)
+        
+        news_query = f"{niche} {keyword}"
+        news_articles = get_live_news(news_query)
+        
+        print("\n[ORCHESTRATOR] Step 3 of 5: Analyzing text sentiments...")
+        news_headlines = [art["title"] for art in news_articles]
+        news_sentiments = []
+        if news_headlines:
+            news_sentiments = analyze_financial_data(news_headlines)
+        
+        for idx, art in enumerate(news_articles):
+            if idx < len(news_sentiments):
+                art["sentiment"] = news_sentiments[idx]
+            else:
+                art["sentiment"] = {"label": "neutral", "score": 0.50}
+                
+        social_keywords = [kw[0] for kw in social_data.get("keywords", [])]
+        social_sentiments = []
+        if social_keywords:
+            social_sentiments = analyze_social_media_data(social_keywords)
+            
+        pos_count = sum(1 for s in social_sentiments if s["label"] == "positive")
+        neg_count = sum(1 for s in social_sentiments if s["label"] == "negative")
+        
+        if pos_count > neg_count:
+            agg_social_label = "positive"
+            agg_social_score = 0.5 + (0.1 * min(5, pos_count - neg_count))
+        elif neg_count > pos_count:
+            agg_social_label = "negative"
+            agg_social_score = 0.5 + (0.1 * min(5, neg_count - pos_count))
+        else:
+            agg_social_label = "neutral"
+            agg_social_score = 0.50
+            
+        social_data["aggregate_sentiment"] = {
+            "label": agg_social_label,
+            "score": round(agg_social_score, 2)
+        }
 
-    # 3. Analyze Sentiment vectors
-    try:
-        news_titles = [article.get("title", "") for article in news_data]
-        sentiment_scores = sentiment_analyst.analyze_financial_data(news_titles) if news_titles else []
-    except Exception as e:
-        print(f" -> Sentiment analyst failed: {e}")
-        sentiment_scores = []
-
-    # 4. Synthesize AI Strategy Playbook
-    try:
-        strategy_playbook = strategy_synthesizer.generate_growth_strategy(
-            niche=business_field,
-            topic=search_topic,
-            problem=f"Struggling with target audience ({target_audience}). Core challenge: {core_problem}",
-            reddit_data=social_data,
-            market_data=market_data,
-            news_sentiment=sentiment_scores
+        print("\n[ORCHESTRATOR] Step 4 of 5: Running Local Neural Classifications...")
+        routing_tensor = tf.constant([problem])
+        
+        preds_topic = model_topic.predict(routing_tensor, verbose=0)
+        idx_topic = np.argmax(preds_topic[0])
+        detected_topic = general_categories[idx_topic]
+        conf_topic = preds_topic[0][idx_topic] * 100
+        
+        preds_strategy = model_strategy.predict(routing_tensor, verbose=0)
+        idx_strategy = np.argmax(preds_strategy[0])
+        detected_strategy = marketing_categories[idx_strategy]
+        
+        print(f"   [Model 1 - Topic]: Sector targeted -> {detected_topic.upper()} ({conf_topic:.1f}% Confidence)")
+        print(f"   [Model 2 - Route]: Operational route selected -> {detected_strategy.upper()}")
+        
+        matched_row = df_marketing[df_marketing["category_label"] == detected_strategy].iloc[0]
+        custom_blueprint = matched_row["strategic_blueprint"]
+        
+        market_details = f"Symbol: {ticker.upper()} | Price: {stock_data.get('current_price', 0.0)} | Trend: {stock_data.get('change', 0.0)}"
+        
+        master_prompt = f"""
+        You are an elite, enterprise-level growth consulting executive.
+        
+        CONTEXT AND SCOPE:
+        - The client operates in the "{niche}" space.
+        - Core product/focus word: "{keyword}"
+        - Industry Sector Classification: {detected_topic.upper()}
+        - Core Business Hurdle: "{problem}"
+        - Live Market Metrics: {market_details}
+        - Social Media Sentiment: {agg_social_label.upper()} (Score: {agg_social_score})
+        
+        OPERATIONAL STRATEGY FRAMEWORK ({detected_strategy.upper()}):
+        You must structure this growth roadmap entirely around these mandatory guidelines from our internal database:
+        {custom_blueprint}
+        
+        OUTPUT REQUIREMENT:
+        Provide an exhaustive, phase-by-phase execution timeline mapping out how to fix the problem. 
+        Do not include introductory or closing conversational fluff. Get straight to the business tactics.
+        """
+        
+        print(" Synthesizing customized strategic roadmap with Gemini...")
+        response = gemini_client.models.generate_content(
+            model="gemini-1.5-pro",
+            contents=master_prompt
         )
+        strategy_playbook = response.text
+
+        print("\n[ORCHESTRATOR] Step 5 of 5: Packaging payload for dashboard.")
+        payload = {
+            "status": "success",
+            "niche": niche,
+            "keyword": keyword,
+            "subreddit": subreddit,
+            "ticker": ticker.upper(),
+            "detected_sector": detected_topic.upper(),
+            "detected_framework": detected_strategy.upper(),
+            "social": {
+                "keywords": social_data.get("keywords", []),
+                "hashtags": social_data.get("hashtags", []),
+                "trending_audios": social_data.get("trending_audios", []),
+                "trending_people": social_data.get("trending_people", []),
+                "sentiment": social_data["aggregate_sentiment"],
+                "raw_count": social_data.get("raw_posts_count", 0)
+            },
+            "market": {
+                "symbol": stock_data.get("symbol", ticker.upper()),
+                "current_price": stock_data.get("current_price", 0.0),
+                "change": stock_data.get("change", 0.0),
+                "percent_change": stock_data.get("percent_change", 0.0),
+                "dates": stock_data.get("dates", []),
+                "prices": stock_data.get("prices", []),
+                "source": stock_data.get("source", "mock")
+            },
+            "news": news_articles,
+            "strategy": strategy_playbook
+        }
+        
+        return jsonify(payload)
+
     except Exception as e:
-        print(f" -> Strategy synthesizer failed: {e}")
-        strategy_playbook = strategy_synthesizer.get_mock_synthesizer_response(business_field, search_topic, core_problem)
+        print(f"\n[ORCHESTRATOR ERROR] Pipeline failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "status": "error",
+            "message": f"Pipeline failure: {str(e)}"
+        }), 500
 
-    # 5. Respond with full payload
-    response_payload = {
-        "status": "success",
-        "market": {
-            "symbol": ticker,
-            "current_price": market_data.get("current_price", 100.0),
-            "change": market_data.get("change", 0.0),
-            "percent_change": market_data.get("percent_change", 0.0),
-            "prices": market_data.get("prices", []),
-            "dates": market_data.get("dates", [])
-        },
-        "social": {
-            "keywords": social_data.get("keywords", []),
-            "hashtags": social_data.get("hashtags", [])
-        },
-        "strategy": strategy_playbook
-    }
-    
-    return jsonify(response_payload)
-
-# Route 3: The Submission Catcher (POST request fallback)
-@app.route('/submit', methods=['POST'])
-def submit():
-    business_field = request.form.get('business_field')
-    core_problem = request.form.get('core_problem')
-    target_audience = request.form.get('target_audience')
-
-    print(f"Field: {business_field}")
-    print(f"Problem: {core_problem}")
-    print(f"Audience: {target_audience}")
-
-    return "Success! Check your terminal to see the captured data. (We will make a real results page later)."
-
-# Run Flask server
-if __name__ == '__main__':
-    app.run(debug=True)
-
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 5000))
+    debug_mode = os.getenv("FLASK_DEBUG", "True").lower() == "true"
+    print(f"Launching flask server on port {port} (Debug: {debug_mode})...")
+    app.run(host="0.0.0.0", port=port, debug=debug_mode, use_reloader=False)
