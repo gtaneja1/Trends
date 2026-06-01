@@ -37,6 +37,43 @@ except (ImportError, Exception):
 if not api_key:
     print(" [WARNING] GEMINI_API_KEY not found in environment variables. Set it in .env for live AI synthesis!")
 
+def call_gemini_rest_fallback(api_key, prompt):
+    """
+    Direct HTTPS REST fallback using standard requests (HTTP/1.1).
+    Bypasses firewalls/proxies that drop HTTP/2 or gRPC connections in SDKs.
+    """
+    import requests
+    print(" -> Attempting direct HTTPS REST API query...")
+    
+    # Try gemini-2.5-flash first, then gemini-1.5-flash
+    for model_name in ["gemini-2.5-flash", "gemini-1.5-flash"]:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [{
+                "parts": [{
+                    "text": prompt
+                }]
+            }],
+            "generationConfig": {
+                "responseMimeType": "application/json"
+            }
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=payload, timeout=20)
+            if response.status_code == 200:
+                res_data = response.json()
+                text = res_data["candidates"][0]["content"]["parts"][0]["text"]
+                print(f"    -> Direct HTTPS REST Success using {model_name}!")
+                return text
+            else:
+                print(f"    [REST WARNING] {model_name} returned status {response.status_code}: {response.text}")
+        except Exception as e:
+            print(f"    [REST WARNING] {model_name} direct HTTP call failed: {e}")
+            
+    return None
+
 def generate_growth_strategy(niche, topic, problem, reddit_data, market_data, news_sentiment):
     """
     Consolidates market metrics, social trends, and business problems,
@@ -202,6 +239,14 @@ Your JSON structure MUST look EXACTLY like this:
         except Exception as e:
             last_error = e
             print(f"    [WARNING] Model {model_name} failed or not supported: {e}")
+
+    # DIRECT HTTPS REST FALLBACK (Perfect bypass for local gRPC / HTTP/2 connection disconnections)
+    if not api_success:
+        print(" [WARNING] SDK engines failed or disconnected. Attempting Direct HTTPS REST fallback...")
+        rest_response = call_gemini_rest_fallback(api_key, prompt)
+        if rest_response:
+            response_text = rest_response
+            api_success = True
 
     if not api_success:
         print(f" [ERROR] Gemini API failed for all model candidates. Last error: {last_error}. Falling back to mock strategy.")
