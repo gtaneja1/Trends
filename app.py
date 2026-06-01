@@ -171,7 +171,7 @@ def analyze_pipeline():
         
         print(" Synthesizing customized strategic roadmap with Gemini...")
         response = gemini_client.models.generate_content(
-            model="gemini-1.5-pro",
+            model="gemini-2.5-flash",
             contents=master_prompt
         )
         strategy_playbook = response.text
