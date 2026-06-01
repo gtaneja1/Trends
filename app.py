@@ -165,16 +165,42 @@ def analyze_pipeline():
         {custom_blueprint}
         
         OUTPUT REQUIREMENT:
-        Provide an exhaustive, phase-by-phase execution timeline mapping out how to fix the problem. 
-        Do not include introductory or closing conversational fluff. Get straight to the business tactics.
+        You must return your output strictly in JSON format. Do not add any conversational text or formatting outside of JSON.
+        
+        Your JSON structure MUST look EXACTLY like this:
+        {{
+          "detected_sector": "A 1-3 word string representing the standard business industry (e.g., 'Organic Food', 'Technology', 'Gaming'). Do NOT use marketing acronyms or strategy names here.",
+          "strategy_playbook": "An exhaustive, phase-by-phase execution timeline mapping out how to fix the problem. Use bullet points and clean structure. Emphasize quality and durable materials. Do not include introductory or closing conversational fluff."
+        }}
         """
         
+        import json
         print(" Synthesizing customized strategic roadmap with Gemini...")
-        response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=master_prompt
-        )
-        strategy_playbook = response.text
+        try:
+            import time
+            response = None
+            for attempt in range(3):
+                try:
+                    response = gemini_client.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=master_prompt,
+                        config={"response_mime_type": "application/json"}
+                    )
+                    break
+                except Exception as attempt_err:
+                    print(f" [WARNING] Gemini call attempt {attempt+1} failed: {attempt_err}")
+                    if attempt < 2:
+                        time.sleep(1)
+                    else:
+                        raise attempt_err
+            
+            res_json = json.loads(response.text.strip())
+            ai_sector = res_json.get("detected_sector", detected_topic.upper())
+            strategy_playbook = res_json.get("strategy_playbook", response.text)
+        except Exception as e:
+            print(f" [WARNING] JSON schema generation failed: {e}. Falling back to default.")
+            ai_sector = detected_topic.upper()
+            strategy_playbook = response.text if (response and hasattr(response, 'text')) else "Fallback Strategy Playbook."
 
         print("\n[ORCHESTRATOR] Step 5 of 5: Packaging payload for dashboard.")
         payload = {
@@ -183,7 +209,7 @@ def analyze_pipeline():
             "keyword": keyword,
             "subreddit": subreddit,
             "ticker": ticker.upper(),
-            "detected_sector": detected_topic.upper(),
+            "detected_sector": ai_sector.upper(),
             "detected_framework": detected_strategy.upper(),
             "social": {
                 "keywords": social_data.get("keywords", []),

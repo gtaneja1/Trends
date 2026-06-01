@@ -396,9 +396,61 @@
 
                     // Inject AI Strategy Text
                     const summaryContainer = document.querySelector('.executive-summary-text');
-                    let formattedStrategy = aiData.strategy.replace(/\*\*(.*?)\*\*/g, '<span class="highlight">$1</span>');
-                    formattedStrategy = formattedStrategy.replace(/\n/g, '<br>');
-                    summaryContainer.innerHTML = formattedStrategy;
+                    
+                    let lines = aiData.strategy.split('\n');
+                    let html = '';
+                    let inList = false;
+
+                    lines.forEach(line => {
+                        let trimmed = line.trim();
+                        if (!trimmed) {
+                            if (inList) {
+                                html += '</ul>';
+                                inList = false;
+                            }
+                            html += '<br>';
+                            return;
+                        }
+                        
+                        // Check if it's a list item or sub-list item
+                        let isListItem = line.startsWith('* ') || line.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('- ');
+                        let isSubListItem = line.startsWith('  * ') || line.startsWith('  - ') || line.startsWith('    * ') || line.startsWith('    - ') || trimmed.startsWith('  * ') || trimmed.startsWith('  - ');
+                        
+                        // Handle inline formatting: **bold** -> highlight
+                        let processedLine = trimmed;
+                        processedLine = processedLine.replace(/\*\*(.*?)\*\*/g, '<span class="highlight">$1</span>');
+                        processedLine = processedLine.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        
+                        if (isListItem || isSubListItem) {
+                            if (!inList) {
+                                html += '<ul style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px; list-style-type: square; color: var(--text-main);">';
+                                inList = true;
+                            }
+                            let cleanText = processedLine.replace(/^[\*\-\s]+/, '');
+                            if (isSubListItem) {
+                                html += `<li style="margin-left: 20px; font-size: 14px; margin-top: 6px; line-height: 1.6; color: var(--text-muted);">${cleanText}</li>`;
+                            } else {
+                                html += `<li style="font-size: 16px; margin-top: 10px; font-weight: 700; line-height: 1.6; color: var(--text-main);">${cleanText}</li>`;
+                            }
+                        } else {
+                            if (inList) {
+                                html += '</ul>';
+                                inList = false;
+                            }
+                            if (trimmed.startsWith('Phase') || trimmed.startsWith('PHASE') || trimmed.startsWith('###')) {
+                                let cleanHeader = trimmed.replace(/^###\s+/, '');
+                                html += `<h4 style="font-size: 20px; font-weight: 800; margin-top: 24px; margin-bottom: 12px; color: var(--brand-primary); font-family: 'Plus Jakarta Sans', sans-serif;">${cleanHeader}</h4>`;
+                            } else {
+                                html += `<p style="font-size: 15px; line-height: 1.8; color: var(--text-muted); margin-bottom: 16px;">${processedLine}</p>`;
+                            }
+                        }
+                    });
+
+                    if (inList) {
+                        html += '</ul>';
+                    }
+
+                    summaryContainer.innerHTML = html;
                     
                     // Update Telemetry Bar
                     const telemetryItems = document.querySelectorAll('.telemetry-item span');
