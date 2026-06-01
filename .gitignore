@@ -1,1 +1,5 @@
 native_ai_env/
+.env
+AI_BACKEND_TRAINING/.env
+__pycache__/
+*.pyc
