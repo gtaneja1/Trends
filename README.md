@@ -4,7 +4,7 @@
 
 The AI-Powered Sales & Marketing Intelligence Platform is a product designed to help small businesses make informed marketing decisions using AI-driven insights. The platform analyzes customer sentiment, market trends, and campaign performance to provide actionable recommendations for improving engagement and business growth.
 
-As the **Product Lead**, I was responsible for defining the product vision, gathering customer requirements, prioritizing features, and coordinating development while also contributing to the technical implementation.
+
 
 ---
 
