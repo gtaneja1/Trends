@@ -191,7 +191,91 @@ input:focus, textarea:focus { border-color: var(--brand-primary); box-shadow: 0 
 .section-label span { color: var(--brand-primary); font-weight: 800; }
 .section-label::after { content: ''; flex-grow: 1; height: 1px; background: var(--border-light); }
 
-.executive-summary-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; line-height: 1.8; color: var(--text-main); }
+.executive-summary-text { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); }
+
+.strategy-content { display: flex; flex-direction: column; gap: 0; }
+
+.strategy-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text-main);
+    margin: 0 0 20px 0;
+    letter-spacing: -0.3px;
+}
+
+.strategy-subheading {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text-main);
+    margin: 32px 0 16px 0;
+    letter-spacing: -0.2px;
+}
+
+.strategy-subheading:first-child,
+.strategy-heading:first-child { margin-top: 0; }
+
+.strategy-paragraph {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-main);
+    margin: 0 0 14px 0;
+}
+
+.strategy-paragraph:last-child { margin-bottom: 0; }
+
+.strategy-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.strategy-list li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-main);
+}
+
+.strategy-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+}
+
+.strategy-list--ordered { counter-reset: strategy-step; }
+.strategy-list--ordered li { counter-increment: strategy-step; padding-left: 32px; }
+.strategy-list--ordered li::before {
+    content: counter(strategy-step, decimal-leading-zero);
+    top: 0;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--brand-primary);
+}
+
+.strategy-divider {
+    border: none;
+    border-top: 1px solid var(--border-light);
+    margin: 28px 0;
+}
+
 .highlight { background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
 
 .proof-container { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; height: 350px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
